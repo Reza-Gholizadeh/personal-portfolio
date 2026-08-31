@@ -1,0 +1,618 @@
+:root {
+  --bg: #08080a;
+  --bg-panel: #0e0e11;
+  --bg-screen: #0b0b0e;
+  --fg: #e6e6ea;
+  --dim: #75757f;
+  --dimmer: #4a4a52;
+  --accent: #fbbf24;
+  --accent-soft: rgba(251, 191, 36, 0.12);
+  --accent-dim: #a9791a;
+  --rule: rgba(255, 255, 255, 0.07);
+  --rule-strong: rgba(255, 255, 255, 0.12);
+
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  --step: 0.9375rem;
+  --lh: 1.75;
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: var(--step);
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Ambient amber glow behind the terminal. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 80% at 50% -10%,
+    rgba(251, 191, 36, 0.07),
+    transparent 60%
+  );
+  z-index: 0;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0px, 3vw, 40px);
+}
+
+/* ---------- shell ---------- */
+
+.terminal {
+  width: min(100%, 960px);
+  height: 100%;
+  max-height: 880px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 30px 90px -20px rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: 0;
+  }
+  .terminal {
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #17171b, #121215);
+  border-bottom: 1px solid var(--rule-strong);
+  font-size: 0.75rem;
+  color: var(--dim);
+  flex: none;
+}
+
+.titlebar__lights {
+  display: flex;
+  gap: 7px;
+  flex: none;
+}
+
+.titlebar__lights span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #2a2a30;
+}
+
+.titlebar__lights span:first-child {
+  background: #3a2a1a;
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.35);
+}
+
+.titlebar__title {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.titlebar__status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+}
+
+.status__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+@media (max-width: 560px) {
+  .titlebar__title {
+    display: none;
+  }
+  .titlebar__status {
+    margin-left: auto;
+  }
+}
+
+/* ---------- screen ---------- */
+
+.screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg-screen);
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a32 transparent;
+}
+
+.screen::-webkit-scrollbar {
+  width: 10px;
+}
+.screen::-webkit-scrollbar-thumb {
+  background: #26262d;
+  border-radius: 99px;
+  border: 3px solid var(--bg-screen);
+}
+
+.screen__inner {
+  padding: 24px clamp(16px, 4vw, 32px) 28px;
+}
+
+.entry {
+  margin-top: 22px;
+}
+
+.boot {
+  padding-bottom: 4px;
+}
+
+/* ---------- rows ---------- */
+
+.row {
+  margin: 0;
+}
+
+.row--blank {
+  height: 0.9em;
+}
+
+.row--rule {
+  height: 1px;
+  background: var(--rule);
+  margin: 10px 0 14px;
+}
+
+.row--text {
+  max-width: 76ch;
+}
+
+.tone-dim {
+  color: var(--dim);
+}
+
+.tone-accent {
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  font-size: 0.8125rem;
+}
+
+.row--heading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--fg);
+}
+
+.heading__mark {
+  color: var(--accent);
+}
+
+.row--echo {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.echo__text {
+  color: var(--fg);
+}
+
+.prompt {
+  display: inline-flex;
+  gap: 6px;
+  flex: none;
+  user-select: none;
+}
+
+.prompt__user {
+  color: var(--accent);
+}
+.prompt__path {
+  color: #6d8fb0;
+}
+.prompt__sigil {
+  color: var(--dim);
+}
+
+/* meta: title on the left, period on the right, dotted leader between */
+.row--meta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.meta__left {
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.meta__dots {
+  flex: 1;
+  min-width: 20px;
+  border-bottom: 1px dotted var(--dimmer);
+  transform: translateY(-4px);
+}
+
+.meta__right {
+  flex: none;
+  color: var(--accent);
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 560px) {
+  .row--meta {
+    flex-wrap: wrap;
+    gap: 0 12px;
+  }
+  .meta__dots {
+    display: none;
+  }
+}
+
+.row--kv {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.kv__key {
+  flex: none;
+  width: 9ch;
+  color: var(--dim);
+}
+
+.kv__key::after {
+  content: ':';
+  color: var(--dimmer);
+}
+
+.kv__value a {
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule-strong);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.kv__value a:hover,
+.kv__value a:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.link__arrow {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: 0.75em;
+  color: var(--dim);
+}
+
+.kv__value a:hover .link__arrow {
+  color: var(--accent);
+}
+
+/* tagged experience blocks */
+.row--tagged {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  padding: 7px 10px 7px 12px;
+  margin: 2px -10px 2px -12px;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.row--tagged:hover {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+
+.tagged__tag {
+  flex: none;
+  width: 16ch;
+  color: var(--accent-dim);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+}
+
+.row--tagged:hover .tagged__tag {
+  color: var(--accent);
+}
+
+.tagged__body {
+  max-width: 70ch;
+  color: #c9c9d1;
+}
+
+@media (max-width: 700px) {
+  .row--tagged {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tagged__tag {
+    width: auto;
+  }
+}
+
+/* ascii proficiency bars */
+.row--bar {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.bar__label {
+  flex: none;
+  width: 22ch;
+  color: #c9c9d1;
+}
+
+.bar__track {
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.bar__on {
+  color: var(--accent);
+}
+.bar__off {
+  color: #2e2e36;
+}
+
+@media (max-width: 560px) {
+  .bar__label {
+    width: 15ch;
+    font-size: 0.8125rem;
+  }
+}
+
+.row--stat {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.stat__value {
+  flex: none;
+  width: 12ch;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.stat__label {
+  color: var(--dim);
+}
+
+@media (max-width: 560px) {
+  .row--stat {
+    flex-direction: column;
+    gap: 0;
+  }
+  .stat__value {
+    width: auto;
+    font-size: 1.25rem;
+  }
+}
+
+.row--cmd {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.cmd__name {
+  flex: none;
+  width: 14ch;
+  color: var(--accent);
+}
+
+.cmd__dash {
+  color: var(--dimmer);
+}
+
+.cmd__desc {
+  color: var(--dim);
+}
+
+/* ---------- input line ---------- */
+
+.row--input {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.inputline {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.inputline__text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.inputline__ghost {
+  color: var(--dimmer);
+}
+
+/* The real input is invisible but focusable, so mobile keyboards still work. */
+.inputline__field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: transparent;
+  caret-color: transparent;
+  font: inherit;
+  /* 16px keeps iOS Safari from zooming the page on focus. */
+  font-size: 16px;
+  padding: 0;
+}
+
+/* Dim the prompt while blurred, so "click anywhere to type" reads as an affordance. */
+.row--input:not(.is-focused) .prompt {
+  opacity: 0.45;
+}
+
+.caret {
+  display: inline-block;
+  min-width: 0.6em;
+  background: transparent;
+  color: inherit;
+  white-space: pre;
+}
+
+.caret.is-on {
+  background: var(--accent);
+  color: #0b0b0e;
+}
+
+.hint {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: var(--dimmer);
+}
+
+.hint__cmd {
+  color: var(--accent-dim);
+}
+
+kbd {
+  font: inherit;
+  font-size: 0.75rem;
+  padding: 1px 6px;
+  border: 1px solid var(--rule-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  color: var(--dim);
+}
+
+/* ---------- launcher ---------- */
+
+.launcher {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px clamp(16px, 4vw, 32px);
+  background: var(--bg-panel);
+  border-top: 1px solid var(--rule-strong);
+}
+
+.launcher__label {
+  flex: none;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dimmer);
+}
+
+.launcher__buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.launcher button {
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 4px 11px;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.launcher button:hover,
+.launcher button:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+@media (max-width: 560px) {
+  .launcher {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .launcher::-webkit-scrollbar {
+    display: none;
+  }
+  .launcher__label {
+    display: none;
+  }
+  .launcher__buttons {
+    flex-wrap: nowrap;
+  }
+  .launcher button {
+    white-space: nowrap;
+  }
+}
+
+::selection {
+  background: rgba(251, 191, 36, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
