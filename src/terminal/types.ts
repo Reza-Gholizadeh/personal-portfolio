@@ -1,7 +1,12 @@
 export type Tone = 'default' | 'dim' | 'accent';
 
-/** A single renderable row of terminal output. */
-export type Node =
+/**
+ * A single renderable row of terminal output.
+ *
+ * Named `OutputLine` rather than `Node` so it never shadows the DOM `Node`
+ * global — inside a `.tsx` file that collision is genuinely confusing.
+ */
+export type OutputLine =
   | { kind: 'text'; text: string; tone?: Tone }
   | { kind: 'blank' }
   | { kind: 'rule' }
@@ -17,5 +22,18 @@ export type Node =
 export type Entry = {
   id: number;
   input: string | null;
-  nodes: Node[];
+  lines: OutputLine[];
+};
+
+export type Command = {
+  name: string;
+  desc: string;
+  /** Shown in the footer quick-launch bar. */
+  quick?: boolean;
+  /**
+   * Wipes the scrollback instead of appending to it. Declared here so the
+   * Terminal component never has to special-case a command by name.
+   */
+  resets?: boolean;
+  run: () => OutputLine[];
 };

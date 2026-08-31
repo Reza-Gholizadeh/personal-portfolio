@@ -12,7 +12,11 @@ export const profile = {
 
 export const contact = [
   { label: 'email', value: 'reza.viand1374@gmail.com', href: 'mailto:reza.viand1374@gmail.com' },
-  { label: 'linkedin', value: 'linkedin.com/in/reza-gholizadeh-dev', href: 'https://linkedin.com/in/reza-gholizadeh-dev' },
+  {
+    label: 'linkedin',
+    value: 'linkedin.com/in/reza-gholizadeh-dev',
+    href: 'https://linkedin.com/in/reza-gholizadeh-dev',
+  },
   { label: 'location', value: 'Tehran, Iran', href: null },
 ] as const;
 
