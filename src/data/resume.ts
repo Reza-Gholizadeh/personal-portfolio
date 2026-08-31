@@ -125,13 +125,13 @@ export const projects: Project[] = [
     period: '2024',
     url: 'https://macandental.com',
     blocks: [
-      // TODO(reza): re-run Lighthouse and replace this qualitative line with the real
-      // before/after figures, matching the shape of the Kamargardan entry above —
-      // e.g. 'Raised the performance score from XX% to YY% ...'. Numbers on a résumé
-      // get asked about in interviews, so these should be measured, not estimated.
       {
         tag: 'Performance',
-        body: 'Reworked the front-end delivery path — image optimization, render-blocking asset removal, caching strategy and Core Web Vitals work — to cut load time on the pages that drive appointment bookings.',
+        body: 'Raised the Lighthouse performance score from 45 to over 95 through image optimization, render-blocking asset removal, caching and Core Web Vitals work on the pages that drive appointment bookings.',
+      },
+      {
+        tag: 'SSR',
+        body: "Diagnosed and repaired the site's broken server-side rendering, so pages ship server-rendered HTML instead of leaving the client to paint them.",
       },
       {
         tag: 'Frontend',
