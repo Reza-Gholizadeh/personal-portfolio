@@ -20,15 +20,6 @@ export const contact = [
   { label: 'location', value: 'Tehran, Iran', href: null },
 ] as const;
 
-export const stats = [
-  { value: '5M+', label: 'active users served' },
-  { value: '500K+', label: 'daily orders handled' },
-  { value: '2,000+', label: 'vendors on Bordar Panel' },
-  { value: '1,500+', label: 'daily support calls replaced' },
-  { value: '30% → 90%', label: 'Lighthouse perf lift (Kamargardan)' },
-  { value: '5+', label: 'years shipping production front-end' },
-] as const;
-
 export type ExperienceBlock = { tag: string; body: string };
 
 export type Experience = {

@@ -15,7 +15,6 @@ export type OutputLine =
   | { kind: 'kv'; key: string; value: string; href?: string | null }
   | { kind: 'tagged'; tag: string; body: string }
   | { kind: 'tags'; label: string; items: readonly string[] }
-  | { kind: 'stat'; value: string; label: string }
   | { kind: 'cmd'; name: string; desc: string };
 
 /** One committed entry in the scrollback: the echoed input plus its output. */

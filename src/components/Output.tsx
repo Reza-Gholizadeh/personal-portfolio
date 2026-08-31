@@ -76,13 +76,6 @@ const renderers: Renderers = {
     </div>
   ),
 
-  stat: ({ value, label }) => (
-    <div className="row row--stat">
-      <span className="stat__value">{value}</span>
-      <span className="stat__label">{label}</span>
-    </div>
-  ),
-
   cmd: ({ name, desc }) => (
     <div className="row row--cmd">
       <span className="cmd__name">{name}</span>

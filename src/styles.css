@@ -460,34 +460,6 @@ body::before {
   }
 }
 
-.row--stat {
-  display: flex;
-  gap: 16px;
-  align-items: baseline;
-}
-
-.stat__value {
-  flex: none;
-  width: 12ch;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.stat__label {
-  color: var(--dim);
-}
-
-@media (max-width: 560px) {
-  .row--stat {
-    flex-direction: column;
-    gap: 0;
-  }
-  .stat__value {
-    width: auto;
-    font-size: 1.25rem;
-  }
-}
-
 .row--cmd {
   display: flex;
   gap: 12px;

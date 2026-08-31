@@ -51,11 +51,6 @@ const renderSkills = (): OutputLine[] => [
   })),
 ];
 
-const renderStats = (): OutputLine[] => [
-  ...heading('stats'),
-  ...resume.stats.map((stat): OutputLine => ({ kind: 'stat', value: stat.value, label: stat.label })),
-];
-
 const renderEducation = (): OutputLine[] => [
   ...heading('education'),
   ...joinBlocks(resume.education, (entry) => [
@@ -90,7 +85,6 @@ export const registry: readonly Command[] = [
   { name: '/experience', desc: 'roles and what I shipped', quick: true, run: renderExperience },
   { name: '/projects', desc: 'selected side work', quick: true, run: renderProjects },
   { name: '/skills', desc: 'stack by category', quick: true, run: renderSkills },
-  { name: '/stats', desc: 'the numbers behind the work', quick: true, run: renderStats },
   { name: '/education', desc: 'degrees', run: renderEducation },
   { name: '/contact', desc: 'all contact details', quick: true, run: renderContact },
   { name: '/help', desc: 'this command menu', quick: true, run: renderHelp },
