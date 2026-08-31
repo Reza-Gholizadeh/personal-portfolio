@@ -7,7 +7,7 @@ export const profile = {
   location: 'Tehran, Iran',
   available: 'Open to senior / staff front-end roles',
   summary:
-    'Front-end engineer with 5+ years building and scaling production web applications with TypeScript, React and Next.js for consumer products serving 5M+ active users and 500K+ daily orders. Focused on frontend architecture, design systems, monorepos and micro-frontends — with performance, state management and reliability as first-class concerns.',
+    'Front-end engineer with 5+ years of experience building and scaling production web applications with TypeScript, React and Next.js for consumer products serving 5M+ active users and 500K+ daily orders. Passionate about building scalable frontend systems and exploring how AI can transform the way software is built and products are delivered. Experienced in AI agents, RAG systems and AI-powered developer tools, with a focus on translating AI capabilities into practical engineering improvements and measurable business impact.',
 } as const;
 
 export const contact = [
