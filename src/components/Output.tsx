@@ -1,117 +1,102 @@
-import type { OutputLine } from '../terminal/types';
+import React from 'react';
+import type { OutputLine, Tone } from '../terminal/types';
 
 const BAR_SEGMENTS = 10;
 
-/** Splits a 0–10 level into filled and empty bar segments. */
-function segmentsFor(level: number) {
-  const filled = Math.max(0, Math.min(BAR_SEGMENTS, Math.round(level)));
-  return { filled: '█'.repeat(filled), empty: '░'.repeat(BAR_SEGMENTS - filled) };
-}
+/** Narrows the union to the one member with the given `kind`. */
+type LineOf<K extends OutputLine['kind']> = Extract<OutputLine, { kind: K }>;
+
+/** One renderer per line kind. */
+type Renderers = { [K in OutputLine['kind']]: (line: LineOf<K>) => React.ReactElement };
+
+const Link = ({ href, label }: { href: string; label: string }) => {
+  const isExternal = href.startsWith('http');
+  return (
+    <a
+      href={href}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noreferrer noopener' : undefined}
+    >
+      {label}
+      <span className="link__arrow" aria-hidden="true">
+        ↗
+      </span>
+    </a>
+  );
+};
 
 /**
- * Makes the switch below exhaustive: adding a variant to `OutputLine` without
- * a matching case becomes a compile error rather than a silently blank row.
+ * A lookup table rather than a switch: each line kind is an independent
+ * presentational function, and the mapped type makes a missing or misnamed kind
+ * a compile error instead of a silently blank row.
  */
-function assertNever(line: never): never {
-  throw new Error(`Unhandled output line: ${JSON.stringify(line)}`);
-}
+const renderers: Renderers = {
+  blank: () => <div className="row row--blank" aria-hidden="true" />,
 
-function Line({ line }: { line: OutputLine }) {
-  switch (line.kind) {
-    case 'blank':
-      return <div className="row row--blank" aria-hidden="true" />;
+  rule: () => <div className="row row--rule" aria-hidden="true" />,
 
-    case 'rule':
-      return <div className="row row--rule" aria-hidden="true" />;
+  text: ({ text, tone = 'default' as Tone }) => <p className={`row row--text tone-${tone}`}>{text}</p>,
 
-    case 'text':
-      return <p className={`row row--text tone-${line.tone ?? 'default'}`}>{line.text}</p>;
+  heading: ({ text }) => (
+    <h2 className="row row--heading">
+      <span className="heading__mark">##</span> {text}
+    </h2>
+  ),
 
-    case 'heading':
-      return (
-        <h2 className="row row--heading">
-          <span className="heading__mark">##</span> {line.text}
-        </h2>
-      );
+  meta: ({ left, right }) => (
+    <div className="row row--meta">
+      <span className="meta__left">{left}</span>
+      <span className="meta__dots" aria-hidden="true" />
+      <span className="meta__right">{right}</span>
+    </div>
+  ),
 
-    case 'meta':
-      return (
-        <div className="row row--meta">
-          <span className="meta__left">{line.left}</span>
-          <span className="meta__dots" aria-hidden="true" />
-          <span className="meta__right">{line.right}</span>
-        </div>
-      );
+  kv: ({ key: label, value, href }) => (
+    <div className="row row--kv">
+      <span className="kv__key">{label}</span>
+      <span className="kv__value">{href ? <Link href={href} label={value} /> : value}</span>
+    </div>
+  ),
 
-    case 'kv': {
-      const isExternal = line.href?.startsWith('http') ?? false;
-      return (
-        <div className="row row--kv">
-          <span className="kv__key">{line.key}</span>
-          <span className="kv__value">
-            {line.href ? (
-              <a
-                href={line.href}
-                target={isExternal ? '_blank' : undefined}
-                rel={isExternal ? 'noreferrer noopener' : undefined}
-              >
-                {line.value}
-                <span className="link__arrow" aria-hidden="true">
-                  ↗
-                </span>
-              </a>
-            ) : (
-              line.value
-            )}
-          </span>
-        </div>
-      );
-    }
+  tagged: ({ tag, body }) => (
+    <div className="row row--tagged">
+      <span className="tagged__tag">[{tag}]</span>
+      <span className="tagged__body">{body}</span>
+    </div>
+  ),
 
-    case 'tagged':
-      return (
-        <div className="row row--tagged">
-          <span className="tagged__tag">[{line.tag}]</span>
-          <span className="tagged__body">{line.body}</span>
-        </div>
-      );
+  bar: ({ label, level }) => {
+    const filled = Math.max(0, Math.min(BAR_SEGMENTS, Math.round(level)));
+    return (
+      <div className="row row--bar">
+        <span className="bar__label">{label}</span>
+        <span className="bar__track" role="img" aria-label={`${level} out of ${BAR_SEGMENTS}`}>
+          <span className="bar__on">{'█'.repeat(filled)}</span>
+          <span className="bar__off">{'░'.repeat(BAR_SEGMENTS - filled)}</span>
+        </span>
+      </div>
+    );
+  },
 
-    case 'bar': {
-      const { filled, empty } = segmentsFor(line.level);
-      return (
-        <div className="row row--bar">
-          <span className="bar__label">{line.label}</span>
-          <span className="bar__track" role="img" aria-label={`${line.level} out of ${BAR_SEGMENTS}`}>
-            <span className="bar__on">{filled}</span>
-            <span className="bar__off">{empty}</span>
-          </span>
-        </div>
-      );
-    }
+  stat: ({ value, label }) => (
+    <div className="row row--stat">
+      <span className="stat__value">{value}</span>
+      <span className="stat__label">{label}</span>
+    </div>
+  ),
 
-    case 'stat':
-      return (
-        <div className="row row--stat">
-          <span className="stat__value">{line.value}</span>
-          <span className="stat__label">{line.label}</span>
-        </div>
-      );
+  cmd: ({ name, desc }) => (
+    <div className="row row--cmd">
+      <span className="cmd__name">{name}</span>
+      <span className="cmd__dash" aria-hidden="true">
+        —
+      </span>
+      <span className="cmd__desc">{desc}</span>
+    </div>
+  ),
+};
 
-    case 'cmd':
-      return (
-        <div className="row row--cmd">
-          <span className="cmd__name">{line.name}</span>
-          <span className="cmd__dash" aria-hidden="true">
-            —
-          </span>
-          <span className="cmd__desc">{line.desc}</span>
-        </div>
-      );
-
-    default:
-      return assertNever(line);
-  }
-}
+const render = (line: OutputLine) => (renderers[line.kind] as (l: OutputLine) => React.ReactElement)(line);
 
 export default function Output({ lines }: { lines: readonly OutputLine[] }) {
   return (
@@ -119,7 +104,7 @@ export default function Output({ lines }: { lines: readonly OutputLine[] }) {
       {/* Index keys are safe here: a rendered block is immutable — lines are
           never inserted, reordered or removed once committed. */}
       {lines.map((line, index) => (
-        <Line key={index} line={line} />
+        <React.Fragment key={index}>{render(line)}</React.Fragment>
       ))}
     </>
   );

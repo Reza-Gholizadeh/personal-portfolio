@@ -45,17 +45,27 @@ refocuses the input.
 
 ```
 src/
-  components/   Terminal (state + input), Output (line renderer), Prompt
-  hooks/        useCommandHistory, usePrefersReducedMotion
-  terminal/     command registry, OutputLine/Entry/Command types
+  terminal/     session.ts   — the whole state machine, pure, no React
+                commands.ts  — command registry + lookup/completion
+                types.ts     — OutputLine, Entry, Command, SessionState
+  hooks/        useTerminalSession — binds the reducer to React
+                useScrollToLatest, usePrefersReducedMotion — DOM concerns
+  components/   Terminal (composition) → TitleBar, Scrollback, InputLine,
+                Launcher, Output, Prompt
   data/         résumé content
 ```
 
+State is separated from logic. Every rule about what the terminal _does_ —
+history recall, completion, clearing, entry ids — lives in `sessionReducer`, a
+pure `(state, action) => state` function with no React or DOM imports. The
+components decide only how that state looks, and hold exactly one piece of
+state of their own: whether the input is focused, which is presentation.
+
 Commands are pure functions returning `OutputLine[]`, so output is data rather
-than markup and the renderer stays a single exhaustive switch. Animation —
-cursor blink and the staggered boot banner — lives in CSS rather than in JS
-timers, which keeps it off the render path and free for `prefers-reduced-motion`
-to override.
+than markup, and `Output` renders it through a lookup table keyed by line kind —
+a mapped type makes a missing renderer a compile error. Animation (cursor blink,
+staggered boot banner) lives in CSS rather than JS timers, keeping it off the
+render path and letting `prefers-reduced-motion` override it.
 
 ## Editing content
 

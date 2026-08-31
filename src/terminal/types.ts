@@ -37,3 +37,33 @@ export type Command = {
   resets?: boolean;
   run: () => OutputLine[];
 };
+
+/**
+ * The terminal's complete state. Held outside React by `sessionReducer`, so the
+ * rules can be exercised without mounting a component.
+ */
+export type SessionState = {
+  entries: Entry[];
+  input: string;
+  caret: number;
+  history: string[];
+  /** Index into `history` while recalling; null when typing fresh input. */
+  historyCursor: number | null;
+  /** Bumped by /clear to replay the boot banner. */
+  bootRun: number;
+  /**
+   * Bumped whenever the reducer replaces the input text itself (Tab completion,
+   * history recall). The view watches this to move the real DOM caret, which it
+   * must not do on every keystroke or it would collapse manual selections.
+   */
+  injections: number;
+  nextEntryId: number;
+};
+
+export type SessionAction =
+  | { type: 'inputChanged'; input: string; caret: number }
+  | { type: 'caretMoved'; caret: number }
+  | { type: 'completionAccepted'; completion: string }
+  | { type: 'submitted' }
+  | { type: 'historyPrevious' }
+  | { type: 'historyNext' };
