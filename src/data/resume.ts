@@ -83,17 +83,40 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    name: 'Kamargardan — Medical Content Platform',
-    period: '2023 — 2024',
-    url: 'https://kamargardan.com',
+    name: 'SnappFood Contact Center — AI Call Quality Assurance',
+    period: '2026',
+    url: null,
     blocks: [
       {
-        tag: 'Performance',
-        body: 'Raised the home page performance score from 30% to over 90% and reached a 100% SEO score through Core Web Vitals work, SSR improvements, code-splitting and bundle optimization.',
+        tag: 'AI Pipeline',
+        body: 'Automated QA auditor for recorded contact-centre calls: audio → speech-to-text → diarization → transcript → rule engine + RAG + LLM → guardrails → deterministic scoring. Agents are scored against a versioned QA framework and the policies retrieved for that specific call.',
       },
       {
-        tag: 'Frontend',
-        body: 'Refactored core pages in Next.js and built responsive, mobile-first interfaces with Tailwind CSS for consistent experiences across devices.',
+        tag: 'Architecture',
+        body: 'Modular monolith on Node.js 22, TypeScript and Fastify with BullMQ background workers; PostgreSQL 16 with pgvector serving as both relational store and vector index, and MinIO holding audio outside the database.',
+      },
+      {
+        tag: 'Reliability',
+        body: 'Every provider — STT, diarization, LLM, embeddings, vector store — sits behind an interface with a deterministic local fallback, so the pipeline completes end to end without a GPU and records a degraded run rather than silently fabricating output.',
+      },
+    ],
+  },
+  {
+    name: 'Hamfekr — Codebase Agent for Grooming and Planning',
+    period: '2026',
+    url: null,
+    blocks: [
+      {
+        tag: 'AI Agent',
+        body: "Answers the questions a team would otherwise put to a front-end engineer during grooming: what a change requires and whether it is light or heavy. Reads the product's real repository per question rather than answering from memory.",
+      },
+      {
+        tag: 'Product',
+        body: 'Replies in product language rather than code, and deliberately refuses to give time estimates — it reports effort and reasoning, leaving the estimate to the team.',
+      },
+      {
+        tag: 'Constraints',
+        body: "Strictly read-only: the agent never modifies a file. Conversations stay in the asker's own browser, so planning talk about a private codebase never leaves the machine.",
       },
     ],
   },
@@ -103,20 +126,23 @@ export const projects: Project[] = [
     url: 'https://vanda.my',
     blocks: [
       {
-        tag: 'Product',
-        body: 'Platform where English learners find a practice partner by level, interests and availability, send practice invitations, and then talk in text and voice with an AI coach available on any message.',
-      },
-      {
         tag: 'Frontend',
         body: 'Leading an incremental React + TypeScript + Vite rewrite of a server-rendered Blade UI, migrating one route at a time behind an nginx boundary so any page can be reverted without a deploy.',
       },
       {
         tag: 'Real-time',
-        body: 'Built the real-time chat surface — voice notes with transcription, photos, reactions, replies, read receipts, typing and presence — over self-hosted WebSockets.',
+        body: 'Built the real-time chat surface — voice notes with transcription, photos, reactions, read receipts, typing and presence — over self-hosted WebSockets.',
       },
+    ],
+  },
+  {
+    name: 'Kamargardan — Medical Content Platform',
+    period: '2023 — 2024',
+    url: 'https://kamargardan.com',
+    blocks: [
       {
-        tag: 'Design System',
-        body: 'Established the shared token layer and component set driving the rewrite, keeping the migrated React routes visually identical to the Blade pages still in production.',
+        tag: 'Performance',
+        body: 'Raised the home page performance score from 30% to over 90% and reached a 100% SEO score through Core Web Vitals work, SSR improvements, code-splitting and bundle optimization.',
       },
     ],
   },
@@ -127,74 +153,40 @@ export const projects: Project[] = [
     blocks: [
       {
         tag: 'Performance',
-        body: 'Raised the Lighthouse performance score from 45 to over 95 through image optimization, render-blocking asset removal, caching and Core Web Vitals work on the pages that drive appointment bookings.',
-      },
-      {
-        tag: 'SSR',
-        body: "Diagnosed and repaired the site's broken server-side rendering, so pages ship server-rendered HTML instead of leaving the client to paint them.",
-      },
-      {
-        tag: 'Frontend',
-        body: 'Tightened the responsive layout and mobile rendering path so the booking flow holds up on low-end devices and slower networks.',
+        body: 'Raised the Lighthouse performance score from 45 to over 95, and repaired the broken server-side rendering so pages ship server-rendered HTML instead of leaving the client to paint them.',
       },
     ],
   },
 ];
 
-/** level is 0–10 and drives the ASCII proficiency bar. */
-export type Skill = { name: string; level: number };
-export type SkillGroup = { category: string; skills: Skill[] };
+/** Skills are listed, not scored — a self-assigned proficiency number tells a
+    reader nothing they can verify. */
+export type SkillGroup = { category: string; skills: string[] };
 
 export const skillGroups: SkillGroup[] = [
+  { category: 'Languages', skills: ['TypeScript', 'JavaScript (ES2023)', 'HTML & CSS'] },
+  { category: 'Frameworks', skills: ['React', 'Next.js', 'React Query', 'Redux'] },
   {
-    category: 'Languages',
+    category: 'AI',
     skills: [
-      { name: 'TypeScript', level: 9 },
-      { name: 'JavaScript (ES2023)', level: 9 },
-      { name: 'HTML & CSS', level: 9 },
+      'LLMs',
+      'AI Agents',
+      'Claude Agent SDK',
+      'RAG',
+      'Hybrid Search',
+      'Qdrant',
+      'Embeddings',
+      'TEI',
+      'Prompt Engineering',
     ],
   },
-  {
-    category: 'Frameworks',
-    skills: [
-      { name: 'React', level: 9 },
-      { name: 'Next.js', level: 9 },
-      { name: 'React Query', level: 8 },
-      { name: 'Redux', level: 7 },
-    ],
-  },
-  {
-    category: 'Styling',
-    skills: [
-      { name: 'Styled Components', level: 8 },
-      { name: 'Tailwind CSS', level: 8 },
-      { name: 'Design Systems', level: 8 },
-    ],
-  },
+  { category: 'Styling', skills: ['Styled Components', 'Tailwind CSS', 'Design Systems'] },
   {
     category: 'Architecture',
-    skills: [
-      { name: 'Monorepo (Turborepo)', level: 8 },
-      { name: 'Module Federation', level: 7 },
-      { name: 'Micro-frontends', level: 7 },
-    ],
+    skills: ['Monorepo (Turborepo)', 'Module Federation', 'Micro-frontends'],
   },
-  {
-    category: 'Quality',
-    skills: [
-      { name: 'Jest', level: 8 },
-      { name: 'Playwright', level: 7 },
-      { name: 'Core Web Vitals', level: 8 },
-    ],
-  },
-  {
-    category: 'Tooling',
-    skills: [
-      { name: 'Git', level: 9 },
-      { name: 'CI/CD', level: 7 },
-      { name: 'Docker', level: 6 },
-    ],
-  },
+  { category: 'Quality', skills: ['Jest', 'Playwright', 'Core Web Vitals'] },
+  { category: 'Tooling', skills: ['Git', 'CI/CD', 'Docker'] },
 ];
 
 export type Education = { degree: string; institution: string; period: string };

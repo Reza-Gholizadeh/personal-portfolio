@@ -417,35 +417,46 @@ body::before {
   }
 }
 
-/* ascii proficiency bars */
-.row--bar {
+/* skill groups — label plus a wrapped row of pills */
+.row--tags {
   display: flex;
   gap: 16px;
   align-items: baseline;
+  margin-top: 10px;
 }
 
-.bar__label {
+.tags__label {
   flex: none;
-  width: 22ch;
-  color: #c9c9d1;
+  width: 14ch;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
 }
 
-.bar__track {
-  letter-spacing: 0.06em;
+.tags__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+.tags__item {
+  padding: 2px 9px;
+  border: 1px solid #2e2e36;
+  border-radius: 3px;
+  color: #c9c9d1;
+  font-size: 0.8125rem;
   white-space: nowrap;
 }
 
-.bar__on {
-  color: var(--accent);
-}
-.bar__off {
-  color: #2e2e36;
-}
-
 @media (max-width: 560px) {
-  .bar__label {
-    width: 15ch;
-    font-size: 0.8125rem;
+  .row--tags {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .tags__label {
+    width: auto;
   }
 }
 

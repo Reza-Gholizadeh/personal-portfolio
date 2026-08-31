@@ -44,10 +44,11 @@ const renderProjects = (): OutputLine[] => [
 
 const renderSkills = (): OutputLine[] => [
   ...heading('skills'),
-  ...joinBlocks(resume.skillGroups, (group) => [
-    { kind: 'text', text: group.category.toUpperCase(), tone: 'accent' },
-    ...group.skills.map((skill): OutputLine => ({ kind: 'bar', label: skill.name, level: skill.level })),
-  ]),
+  ...resume.skillGroups.map((group): OutputLine => ({
+    kind: 'tags',
+    label: group.category,
+    items: group.skills,
+  })),
 ];
 
 const renderStats = (): OutputLine[] => [
@@ -88,7 +89,7 @@ export const registry: readonly Command[] = [
   { name: '/about', desc: 'bio, role, stack, location', quick: true, run: renderAbout },
   { name: '/experience', desc: 'roles and what I shipped', quick: true, run: renderExperience },
   { name: '/projects', desc: 'selected side work', quick: true, run: renderProjects },
-  { name: '/skills', desc: 'stack by category with proficiency', quick: true, run: renderSkills },
+  { name: '/skills', desc: 'stack by category', quick: true, run: renderSkills },
   { name: '/stats', desc: 'the numbers behind the work', quick: true, run: renderStats },
   { name: '/education', desc: 'degrees', run: renderEducation },
   { name: '/contact', desc: 'all contact details', quick: true, run: renderContact },

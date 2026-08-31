@@ -1,8 +1,6 @@
 import React from 'react';
 import type { OutputLine, Tone } from '../terminal/types';
 
-const BAR_SEGMENTS = 10;
-
 /** Narrows the union to the one member with the given `kind`. */
 type LineOf<K extends OutputLine['kind']> = Extract<OutputLine, { kind: K }>;
 
@@ -65,18 +63,18 @@ const renderers: Renderers = {
     </div>
   ),
 
-  bar: ({ label, level }) => {
-    const filled = Math.max(0, Math.min(BAR_SEGMENTS, Math.round(level)));
-    return (
-      <div className="row row--bar">
-        <span className="bar__label">{label}</span>
-        <span className="bar__track" role="img" aria-label={`${level} out of ${BAR_SEGMENTS}`}>
-          <span className="bar__on">{'█'.repeat(filled)}</span>
-          <span className="bar__off">{'░'.repeat(BAR_SEGMENTS - filled)}</span>
-        </span>
-      </div>
-    );
-  },
+  tags: ({ label, items }) => (
+    <div className="row row--tags">
+      <span className="tags__label">{label}</span>
+      <span className="tags__items">
+        {items.map((item) => (
+          <span className="tags__item" key={item}>
+            {item}
+          </span>
+        ))}
+      </span>
+    </div>
+  ),
 
   stat: ({ value, label }) => (
     <div className="row row--stat">

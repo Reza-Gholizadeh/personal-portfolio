@@ -14,7 +14,7 @@ export type OutputLine =
   | { kind: 'meta'; left: string; right: string }
   | { kind: 'kv'; key: string; value: string; href?: string | null }
   | { kind: 'tagged'; tag: string; body: string }
-  | { kind: 'bar'; label: string; level: number }
+  | { kind: 'tags'; label: string; items: readonly string[] }
   | { kind: 'stat'; value: string; label: string }
   | { kind: 'cmd'; name: string; desc: string };
 

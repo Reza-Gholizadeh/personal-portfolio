@@ -30,7 +30,7 @@ Netlify, GitHub Pages or any static host. Deployment to GitHub Pages runs from
 | `/about`      | bio, role, stack, location                             |
 | `/experience` | roles, with tagged responsibility blocks               |
 | `/projects`   | selected side work                                     |
-| `/skills`     | stack by category with ASCII proficiency bars          |
+| `/skills`     | stack by category                                      |
 | `/stats`      | key numbers                                            |
 | `/education`  | degrees                                                |
 | `/contact`    | email, LinkedIn, location                              |
@@ -72,5 +72,4 @@ render path and letting `prefers-reduced-motion` override it.
 All résumé content is in [`src/data/resume.ts`](src/data/resume.ts) — profile,
 contact, stats, experience, projects, skills and education. Commands are wired
 up in [`src/terminal/commands.ts`](src/terminal/commands.ts); adding one means
-appending to the `registry` array. Skill `level` is 0–10 and drives the bar
-width.
+appending to the `registry` array.
