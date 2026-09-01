@@ -35,6 +35,7 @@ export function useTerminalSession() {
       input: state.input,
       caret: state.caret,
       bootRun: state.bootRun,
+      openPost: state.openPost,
       injections: state.injections,
       completion,
       /**
@@ -47,6 +48,16 @@ export function useTerminalSession() {
       submit,
       run,
     }),
-    [state.entries, state.input, state.caret, state.bootRun, state.injections, completion, submit, run],
+    [
+      state.entries,
+      state.input,
+      state.caret,
+      state.bootRun,
+      state.openPost,
+      state.injections,
+      completion,
+      submit,
+      run,
+    ],
   );
 }

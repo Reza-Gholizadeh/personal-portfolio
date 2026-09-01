@@ -17,7 +17,19 @@ export type OutputLine =
   | { kind: 'tags'; label: string; items: readonly string[] }
   | { kind: 'cmd'; name: string; desc: string }
   | { kind: 'quote'; text: string }
-  | { kind: 'pre'; text: string };
+  | { kind: 'pre'; text: string }
+  /** A labelled box drawn with CSS rather than box-drawing characters, which
+      would wrap badly on narrow screens. */
+  | { kind: 'panel'; label: string; lines: OutputLine[] }
+  | {
+      kind: 'postEntry';
+      ordinal: string;
+      date: string;
+      readingTime: string;
+      command: string;
+      title: string;
+      tags: readonly string[];
+    };
 
 /** One committed entry in the scrollback: the echoed input plus its output. */
 export type Entry = {
@@ -50,6 +62,12 @@ export type Command = {
    * Terminal component never has to special-case a command by name.
    */
   resets?: boolean;
+  /**
+   * Returns a post slug to leave the terminal for the reading view, or null to
+   * stay. Declared like `resets` so navigation is a property of the command
+   * rather than a name the reducer has to recognise.
+   */
+  opens?: (context: CommandContext) => string | null;
   run: (context: CommandContext) => OutputLine[];
 };
 
@@ -66,6 +84,8 @@ export type SessionState = {
   historyCursor: number | null;
   /** Bumped by /clear to replay the boot banner. */
   bootRun: number;
+  /** Slug of the post being read full-screen; null while in the terminal. */
+  openPost: string | null;
   /**
    * Bumped whenever the reducer replaces the input text itself (Tab completion,
    * history recall). The view watches this to move the real DOM caret, which it
@@ -81,4 +101,5 @@ export type SessionAction =
   | { type: 'completionAccepted'; completion: string }
   | { type: 'submitted'; env: Environment }
   | { type: 'historyPrevious' }
-  | { type: 'historyNext' };
+  | { type: 'historyNext' }
+  | { type: 'postClosed' };

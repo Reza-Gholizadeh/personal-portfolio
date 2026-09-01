@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
+import Article from './Article';
 import InputLine, { type InputLineHandle } from './InputLine';
 import Launcher from './Launcher';
 import Scrollback from './Scrollback';
 import TitleBar from './TitleBar';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { posts } from '../data/blog';
 import { useScrollToLatest } from '../hooks/useScrollToLatest';
 import { useTerminalSession } from '../hooks/useTerminalSession';
 
@@ -24,7 +26,12 @@ export default function Terminal() {
   useScrollToLatest(screenRef, lastEntryRef, session.entries, !reducedMotion);
 
   const focusInput = useCallback(() => inputHandleRef.current?.focus(), []);
-  useEffect(focusInput, [focusInput]);
+  // Keyed on openPost, not mount: this component stays mounted while an article
+  // is open and only swaps its subtree, so InputLine remounts underneath it and
+  // would otherwise come back unfocused.
+  useEffect(() => {
+    if (!session.openPost) focusInput();
+  }, [session.openPost, focusInput]);
 
   const runCommand = useCallback(
     (command: string) => {
@@ -40,6 +47,13 @@ export default function Terminal() {
     if (window.getSelection()?.toString()) return;
     focusInput();
   };
+
+  // Reading a post replaces the terminal entirely rather than rendering beside
+  // it, so the article gets the whole viewport and its own typography.
+  const openPost = posts.find((post) => post.slug === session.openPost);
+  if (openPost) {
+    return <Article post={openPost} onClose={() => session.dispatch({ type: 'postClosed' })} />;
+  }
 
   return (
     <div className="terminal" onMouseUp={handleMouseUp}>

@@ -86,6 +86,28 @@ const renderers: Renderers = {
     </pre>
   ),
 
+  panel: ({ label, lines }) => (
+    <section className="row row--panel" aria-label={label}>
+      <h2 className="panel__label">{label}</h2>
+      {lines.map((line, index) => (
+        <React.Fragment key={index}>{render(line)}</React.Fragment>
+      ))}
+    </section>
+  ),
+
+  postEntry: ({ ordinal, date, readingTime, command, title, tags }) => (
+    <article className="row row--post">
+      <div className="post__meta">
+        <span className="post__ordinal">{ordinal}</span>
+        <span className="post__date">{date}</span>
+        <span className="post__time">{readingTime}</span>
+      </div>
+      <div className="post__command">{command}</div>
+      <h3 className="post__title">{title}</h3>
+      <div className="post__tags">{tags.join(' · ')}</div>
+    </article>
+  ),
+
   cmd: ({ name, desc }) => (
     <div className="row row--cmd">
       <span className="cmd__name">{name}</span>

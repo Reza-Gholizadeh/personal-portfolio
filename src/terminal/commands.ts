@@ -1,4 +1,4 @@
-import { posts } from '../data/blog';
+import { posts, readingTime } from '../data/blog';
 import * as resume from '../data/resume';
 import type { Command, CommandContext, OutputLine } from './types';
 
@@ -98,57 +98,43 @@ const renderEnv = ({ env }: CommandContext): OutputLine[] => [
   },
 ];
 
-/**
- * Prose needs a blank line between paragraphs, but the résumé sections do not —
- * a global CSS rule would also loosen the boot banner. Inserting the gap here
- * keeps post data free of layout noise and the rest of the terminal tight.
- */
-const spaceParagraphs = (lines: OutputLine[]): OutputLine[] =>
-  lines.flatMap((line, i): OutputLine[] =>
-    lines[i - 1]?.kind === 'text' && line.kind === 'text' ? [{ kind: 'blank' }, line] : [line],
-  );
-
-/** Finds a post by 1-based index or by slug, so `/blog 1` and `/blog affected-aware-ci` both work. */
-const findPost = (token: string) => {
-  const byIndex = posts[Number(token) - 1];
-  return byIndex ?? posts.find((post) => post.slug === token.toLowerCase());
-};
-
-const postIndex = (): OutputLine[] =>
-  posts.flatMap((post, i): OutputLine[] => [
-    { kind: 'meta', left: `${i + 1}. ${post.title}`, right: post.date },
-    { kind: 'text', text: post.standfirst, tone: 'dim' },
-    { kind: 'blank' },
-  ]);
+const findPost = (slug: string) => posts.find((post) => post.slug === slug.toLowerCase());
 
 /**
- * Lists posts, or opens one. A full post is long enough that dumping every
- * post into the scrollback at once would bury the prompt.
+ * The index. Opening a post is handled by `opens` below, which hands the reader
+ * to the full-screen reading view rather than printing the article inline.
  */
 const renderBlog = ({ args }: CommandContext): OutputLine[] => {
-  const [token] = args;
+  const [slug] = args;
 
-  if (!token) {
+  if (slug && !findPost(slug)) {
     return [
-      ...heading('blog'),
-      ...postIndex(),
-      { kind: 'text', text: 'Open one with /blog 1, or by name: /blog ' + posts[0].slug, tone: 'dim' },
-    ];
-  }
-
-  const post = findPost(token);
-  if (!post) {
-    return [
-      { kind: 'text', text: `no such post: ${token}`, tone: 'accent' },
+      { kind: 'text', text: `no such post: ${slug}`, tone: 'accent' },
       { kind: 'text', text: 'run /blog to list what is here.', tone: 'dim' },
     ];
   }
 
   return [
-    ...heading(post.title),
-    { kind: 'text', text: post.date, tone: 'dim' },
-    { kind: 'blank' },
-    ...spaceParagraphs(post.body),
+    {
+      kind: 'panel',
+      label: 'blog',
+      lines: [
+        {
+          kind: 'text',
+          text: `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}. Type /blog <slug> to open one.`,
+          tone: 'dim',
+        },
+        ...posts.map((post, i): OutputLine => ({
+          kind: 'postEntry',
+          ordinal: String(i + 1).padStart(2, '0'),
+          date: post.date,
+          readingTime: readingTime(post),
+          command: `/blog ${post.slug}`,
+          title: post.title,
+          tags: post.tags,
+        })),
+      ],
+    },
   ];
 };
 
@@ -165,7 +151,13 @@ export const registry: readonly Command[] = [
   { name: '/about', desc: 'bio, role, stack, location', quick: true, run: renderAbout },
   { name: '/experience', desc: 'roles and what I shipped', quick: true, run: renderExperience },
   { name: '/projects', desc: 'selected side work', quick: true, run: renderProjects },
-  { name: '/blog', desc: 'writing — /blog to list, /blog 1 to read', quick: true, run: renderBlog },
+  {
+    name: '/blog',
+    desc: 'writing — /blog to list, /blog <slug> to read',
+    quick: true,
+    run: renderBlog,
+    opens: ({ args }) => (args[0] && findPost(args[0]) ? findPost(args[0])!.slug : null),
+  },
   { name: '/skills', desc: 'stack by category', quick: true, run: renderSkills },
   { name: '/education', desc: 'degrees', run: renderEducation },
   { name: '/env', desc: 'what this page detected about your browser', run: renderEnv },

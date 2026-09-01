@@ -30,7 +30,7 @@ Netlify, GitHub Pages or any static host. Deployment to GitHub Pages runs from
 | `/about`      | bio, role, stack, location                             |
 | `/experience` | roles, with tagged responsibility blocks               |
 | `/projects`   | selected side work                                     |
-| `/blog`       | writing — `/blog` to list, `/blog 1` to read           |
+| `/blog`       | writing — `/blog` to list, `/blog <slug>` to read      |
 | `/skills`     | stack by category                                      |
 | `/education`  | degrees                                                |
 | `/env`        | what this page detected about your browser             |
@@ -61,6 +61,11 @@ history recall, completion, clearing, entry ids — lives in `sessionReducer`, a
 pure `(state, action) => state` function with no React or DOM imports. The
 components decide only how that state looks, and hold exactly one piece of
 state of their own: whether the input is focused, which is presentation.
+
+Opening a post leaves the terminal for a full-screen reading view
+([`Article.tsx`](src/components/Article.tsx)) with its own proportional
+typography. A command declares that with `opens`, the same way `/clear`
+declares `resets`, so the reducer never recognises a command by name.
 
 Posts live in [`src/data/blog.ts`](src/data/blog.ts) as typed `OutputLine[]`
 rather than markdown strings — the same shape as every other section, and no

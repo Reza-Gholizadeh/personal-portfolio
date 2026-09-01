@@ -484,6 +484,214 @@ body::before {
   white-space: pre;
 }
 
+/* ---------- blog index ---------- */
+
+.row--panel {
+  position: relative;
+  margin: 18px 0 8px;
+  padding: 22px 20px 18px;
+  border: 1px solid var(--accent-dim);
+  border-radius: 3px;
+}
+
+/* Sits on the border like a fieldset legend, so the frame reads as one box
+   without box-drawing characters that would wrap on narrow screens. */
+.panel__label {
+  position: absolute;
+  top: -0.62em;
+  left: 14px;
+  margin: 0;
+  padding: 0 8px;
+  background: var(--bg-screen);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.row--post {
+  display: grid;
+  gap: 2px;
+  margin-top: 20px;
+}
+
+.post__meta {
+  display: flex;
+  gap: 18px;
+  color: var(--dimmer);
+  font-size: 0.8125rem;
+}
+
+.post__ordinal {
+  color: var(--dim);
+}
+
+.post__command {
+  color: var(--accent);
+}
+
+.post__title {
+  margin: 2px 0 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.post__tags {
+  color: var(--dimmer);
+  font-size: 0.8125rem;
+}
+
+/* ---------- article reading view ---------- */
+
+/* The app shell is height-locked so the terminal never scrolls the page. An
+   article is taller than the viewport, so it takes the viewport over and
+   scrolls itself rather than overflowing a container that cannot scroll. */
+.article {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--bg-screen);
+}
+
+.article__bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-screen);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #1c1c22;
+  font-size: 0.8125rem;
+  color: var(--dimmer);
+}
+
+.article__back {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--dim);
+  font: inherit;
+  cursor: pointer;
+}
+
+.article__back:hover,
+.article__back:focus-visible {
+  color: var(--accent);
+}
+
+.article__path {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.article__body {
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+}
+
+.article__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.article__tag {
+  padding: 3px 9px;
+  border: 1px solid var(--accent-dim);
+  border-radius: 3px;
+  color: var(--accent);
+  font-size: 0.75rem;
+}
+
+/* Long-form wants a proportional face; the terminal keeps its monospace. */
+.article__title {
+  margin: 0 0 22px;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: #f2f2f4;
+}
+
+.article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--dimmer);
+  font-size: 0.8125rem;
+}
+
+.article__sep {
+  color: var(--accent-dim);
+}
+
+.article__rule {
+  margin: 34px 0;
+  border: 0;
+  border-top: 1px solid #1c1c22;
+}
+
+.article__prose {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: #c8c8d0;
+}
+
+.article__prose .row--heading {
+  margin: 40px 0 6px;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f2f2f4;
+}
+
+/* The terminal prefixes headings with ##; an article should not. */
+.article__prose .heading__mark {
+  display: none;
+}
+
+.article__prose .row--quote {
+  font-size: 1.0625rem;
+  font-style: italic;
+}
+
+.article__prose .row--pre {
+  font-family: var(--mono);
+}
+
+@media (max-width: 560px) {
+  .article__body {
+    padding: 36px 18px 72px;
+  }
+}
+
 .row--cmd {
   display: flex;
   gap: 12px;

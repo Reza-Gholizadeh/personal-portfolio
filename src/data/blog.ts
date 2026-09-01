@@ -10,10 +10,24 @@ export type Post = {
   slug: string;
   title: string;
   date: string;
-  /** One line shown in the /blog index. */
-  standfirst: string;
+  tags: readonly string[];
   body: OutputLine[];
 };
+
+const WORDS_PER_MINUTE = 200;
+
+/**
+ * Derived from the body rather than stored, so it can never drift out of date
+ * when a post is edited.
+ */
+export function readingTime(post: Post): string {
+  const words = post.body
+    .map((line) => ('text' in line ? line.text : ''))
+    .join(' ')
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return `${Math.max(1, Math.round(words / WORDS_PER_MINUTE))} min read`;
+}
 
 const CI_FLOW = `Git diff
    ↓
@@ -31,8 +45,8 @@ export const posts: Post[] = [
   {
     slug: 'affected-aware-ci',
     title: 'How We Cut Our Monorepo CI Pipeline from 12 Minutes to 2 Minutes',
-    date: '2026-09',
-    standfirst: 'Asking why we ran the work, instead of how to run it faster.',
+    date: '2026-09-01',
+    tags: ['CI', 'Turborepo', 'Monorepo'],
     body: [
       {
         kind: 'text',
