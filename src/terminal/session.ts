@@ -61,7 +61,7 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
 
       return append(remembered, {
         input: command,
-        lines: match ? match.run() : unknownCommand(command),
+        lines: match ? match.run(action.env) : unknownCommand(command),
       });
     }
 

@@ -56,6 +56,8 @@ export default function Terminal() {
             injections={session.injections}
             completion={session.completion}
             dispatch={session.dispatch}
+            onSubmit={session.submit}
+            onRun={session.run}
             inputRef={inputRef}
             handleRef={inputHandleRef}
           />

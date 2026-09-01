@@ -1,4 +1,5 @@
 import * as resume from '../data/resume';
+import type { Environment } from './environment';
 import type { Command, OutputLine } from './types';
 
 /** Section header plus its underline — every command opens with one. */
@@ -75,6 +76,28 @@ const renderContact = (): OutputLine[] => [
   { kind: 'text', text: resume.profile.available, tone: 'dim' },
 ];
 
+/**
+ * Reports what this page adapted to about the visit, rather than everything the
+ * browser could be made to disclose. Rows that only Chromium exposes are
+ * omitted where unavailable instead of printed as "unknown".
+ */
+const renderEnv = (env: Environment): OutputLine[] => [
+  ...heading('env'),
+  { kind: 'kv', key: 'viewport', value: env.viewport },
+  { kind: 'kv', key: 'display', value: env.display },
+  { kind: 'kv', key: 'motion', value: env.motion },
+  { kind: 'kv', key: 'language', value: env.language },
+  { kind: 'kv', key: 'timezone', value: env.timezone },
+  ...(env.platform ? [{ kind: 'kv', key: 'platform', value: env.platform } as OutputLine] : []),
+  ...(env.network ? [{ kind: 'kv', key: 'network', value: env.network } as OutputLine] : []),
+  { kind: 'blank' },
+  {
+    kind: 'text',
+    text: 'Read live from your browser and rendered here. This site is static, has no backend and no analytics — none of it is sent anywhere.',
+    tone: 'dim',
+  },
+];
+
 // Reads `registry` below at call time, never at module load — the listing stays
 // the single source of truth, including /help's own description.
 const renderHelp = (): OutputLine[] => [
@@ -90,6 +113,7 @@ export const registry: readonly Command[] = [
   { name: '/projects', desc: 'selected side work', quick: true, run: renderProjects },
   { name: '/skills', desc: 'stack by category', quick: true, run: renderSkills },
   { name: '/education', desc: 'degrees', run: renderEducation },
+  { name: '/env', desc: 'what this page detected about your browser', run: renderEnv },
   { name: '/contact', desc: 'all contact details', quick: true, run: renderContact },
   { name: '/help', desc: 'this command menu', quick: true, run: renderHelp },
   {

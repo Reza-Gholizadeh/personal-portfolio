@@ -24,6 +24,8 @@ export type Entry = {
   lines: OutputLine[];
 };
 
+import type { Environment } from './environment';
+
 export type Command = {
   name: string;
   desc: string;
@@ -34,7 +36,11 @@ export type Command = {
    * Terminal component never has to special-case a command by name.
    */
   resets?: boolean;
-  run: () => OutputLine[];
+  /**
+   * Receives the environment snapshot captured when the command was submitted,
+   * so a command can report on the browser without the reducer ever touching it.
+   */
+  run: (env: Environment) => OutputLine[];
 };
 
 /**
@@ -63,6 +69,6 @@ export type SessionAction =
   | { type: 'inputChanged'; input: string; caret: number }
   | { type: 'caretMoved'; caret: number }
   | { type: 'completionAccepted'; completion: string }
-  | { type: 'submitted' }
+  | { type: 'submitted'; env: Environment }
   | { type: 'historyPrevious' }
   | { type: 'historyNext' };

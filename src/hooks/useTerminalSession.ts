@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useReducer } from 'react';
 import { completionFor } from '../terminal/commands';
+import { readEnvironment } from '../terminal/environment';
 import { initialSession, sessionReducer } from '../terminal/session';
 import type { SessionAction } from '../terminal/types';
 
@@ -14,10 +15,19 @@ export function useTerminalSession() {
 
   const completion = useMemo(() => completionFor(state.input), [state.input]);
 
-  const run = useCallback((input: string) => {
-    dispatch({ type: 'inputChanged', input, caret: input.length });
-    dispatch({ type: 'submitted' });
+  // Both submission paths capture the environment snapshot here, at the edge of
+  // the pure reducer, so no command has to reach for `window` itself.
+  const submit = useCallback(() => {
+    dispatch({ type: 'submitted', env: readEnvironment() });
   }, []);
+
+  const run = useCallback(
+    (input: string) => {
+      dispatch({ type: 'inputChanged', input, caret: input.length });
+      submit();
+    },
+    [submit],
+  );
 
   return useMemo(
     () => ({
@@ -34,8 +44,9 @@ export function useTerminalSession() {
        */
       ghost: completion?.slice(state.input.length) ?? '',
       dispatch: dispatch as React.Dispatch<SessionAction>,
+      submit,
       run,
     }),
-    [state.entries, state.input, state.caret, state.bootRun, state.injections, completion, run],
+    [state.entries, state.input, state.caret, state.bootRun, state.injections, completion, submit, run],
   );
 }

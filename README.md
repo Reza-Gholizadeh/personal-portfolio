@@ -32,6 +32,7 @@ Netlify, GitHub Pages or any static host. Deployment to GitHub Pages runs from
 | `/projects`   | selected side work                                     |
 | `/skills`     | stack by category                                      |
 | `/education`  | degrees                                                |
+| `/env`        | what this page detected about your browser             |
 | `/contact`    | email, LinkedIn, location                              |
 | `/help`       | command menu                                           |
 | `/clear`      | wipe back to the boot screen (also `Ctrl`/`Cmd` + `L`) |
@@ -59,6 +60,12 @@ history recall, completion, clearing, entry ids — lives in `sessionReducer`, a
 pure `(state, action) => state` function with no React or DOM imports. The
 components decide only how that state looks, and hold exactly one piece of
 state of their own: whether the input is focused, which is presentation.
+
+Reading the browser for `/env` is a side effect, so it happens once at the
+edge — `readEnvironment()` is called when a command is submitted and the
+snapshot travels into the reducer on the action. `sessionReducer` stays a pure
+function of (state, action), and each `/env` in the scrollback keeps the values
+it was run with.
 
 Commands are pure functions returning `OutputLine[]`, so output is data rather
 than markup, and `Output` renders it through a lookup table keyed by line kind —

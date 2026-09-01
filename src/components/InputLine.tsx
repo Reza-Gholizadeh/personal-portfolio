@@ -13,6 +13,8 @@ type InputLineProps = {
   injections: number;
   completion: string | null;
   dispatch: React.Dispatch<SessionAction>;
+  onSubmit: () => void;
+  onRun: (command: string) => void;
   inputRef: Ref<HTMLInputElement>;
   handleRef: Ref<InputLineHandle>;
 };
@@ -32,6 +34,8 @@ export default function InputLine({
   injections,
   completion,
   dispatch,
+  onSubmit,
+  onRun,
   inputRef,
   handleRef,
 }: InputLineProps) {
@@ -72,7 +76,7 @@ export default function InputLine({
     switch (event.key) {
       case 'Enter':
         event.preventDefault();
-        return dispatch({ type: 'submitted' });
+        return onSubmit();
 
       case 'Tab':
         event.preventDefault();
@@ -91,8 +95,7 @@ export default function InputLine({
       case 'l':
         if (event.ctrlKey || event.metaKey) {
           event.preventDefault();
-          dispatch({ type: 'inputChanged', input: '/clear', caret: 6 });
-          dispatch({ type: 'submitted' });
+          onRun('/clear');
         }
     }
   };
