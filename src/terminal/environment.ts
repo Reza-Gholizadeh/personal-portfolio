@@ -48,7 +48,12 @@ function describeNetwork(): string | null {
 
 export function readEnvironment(): Environment {
   return {
-    viewport: `${window.innerWidth} × ${window.innerHeight} css px`,
+    // Orientation is derived from the viewport rather than read from
+    // screen.orientation: that reports the physical screen, which can disagree
+    // with the box the page is actually laying out against.
+    viewport: `${window.innerWidth} × ${window.innerHeight} css px · ${
+      window.innerWidth >= window.innerHeight ? 'landscape' : 'portrait'
+    }`,
     display: `${window.devicePixelRatio}× dpr · ${ask('(prefers-color-scheme: dark)') ? 'dark' : 'light'}`,
     motion: ask('(prefers-reduced-motion: reduce)') ? 'reduced — animations disabled for you' : 'full',
     language: navigator.language,
