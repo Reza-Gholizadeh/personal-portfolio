@@ -15,7 +15,9 @@ export type OutputLine =
   | { kind: 'kv'; key: string; value: string; href?: string | null }
   | { kind: 'tagged'; tag: string; body: string }
   | { kind: 'tags'; label: string; items: readonly string[] }
-  | { kind: 'cmd'; name: string; desc: string };
+  | { kind: 'cmd'; name: string; desc: string }
+  | { kind: 'quote'; text: string }
+  | { kind: 'pre'; text: string };
 
 /** One committed entry in the scrollback: the echoed input plus its output. */
 export type Entry = {
@@ -25,6 +27,18 @@ export type Entry = {
 };
 
 import type { Environment } from './environment';
+
+/**
+ * Everything a command may need beyond the résumé data it imports directly.
+ * Passed as one object so adding a capability later does not reshuffle
+ * positional parameters across every command.
+ */
+export type CommandContext = {
+  /** Captured when the command was submitted, so no command touches `window`. */
+  env: Environment;
+  /** Whitespace-separated words after the command name: `/blog 1` -> ['1']. */
+  args: string[];
+};
 
 export type Command = {
   name: string;
@@ -36,11 +50,7 @@ export type Command = {
    * Terminal component never has to special-case a command by name.
    */
   resets?: boolean;
-  /**
-   * Receives the environment snapshot captured when the command was submitted,
-   * so a command can report on the browser without the reducer ever touching it.
-   */
-  run: (env: Environment) => OutputLine[];
+  run: (context: CommandContext) => OutputLine[];
 };
 
 /**

@@ -30,6 +30,7 @@ Netlify, GitHub Pages or any static host. Deployment to GitHub Pages runs from
 | `/about`      | bio, role, stack, location                             |
 | `/experience` | roles, with tagged responsibility blocks               |
 | `/projects`   | selected side work                                     |
+| `/blog`       | writing — `/blog` to list, `/blog 1` to read           |
 | `/skills`     | stack by category                                      |
 | `/education`  | degrees                                                |
 | `/env`        | what this page detected about your browser             |
@@ -60,6 +61,11 @@ history recall, completion, clearing, entry ids — lives in `sessionReducer`, a
 pure `(state, action) => state` function with no React or DOM imports. The
 components decide only how that state looks, and hold exactly one piece of
 state of their own: whether the input is focused, which is presentation.
+
+Posts live in [`src/data/blog.ts`](src/data/blog.ts) as typed `OutputLine[]`
+rather than markdown strings — the same shape as every other section, and no
+parser in the bundle. If posting gets frequent, convert markdown to these lines
+at build time rather than shipping a renderer.
 
 Reading the browser for `/env` is a side effect, so it happens once at the
 edge — `readEnvironment()` is called when a command is submitted and the

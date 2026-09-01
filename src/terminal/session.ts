@@ -1,4 +1,4 @@
-import { findCommand, unknownCommand } from './commands';
+import { findCommand, parseInput, unknownCommand } from './commands';
 import type { Entry, SessionAction, SessionState } from './types';
 
 /**
@@ -61,7 +61,9 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
 
       return append(remembered, {
         input: command,
-        lines: match ? match.run(action.env) : unknownCommand(command),
+        lines: match
+          ? match.run({ env: action.env, args: parseInput(command).args })
+          : unknownCommand(command),
       });
     }
 

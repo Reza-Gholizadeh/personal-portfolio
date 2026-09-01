@@ -76,6 +76,16 @@ const renderers: Renderers = {
     </div>
   ),
 
+  quote: ({ text }) => <blockquote className="row row--quote">{text}</blockquote>,
+
+  // Preserves its own whitespace and scrolls on its own rather than forcing the
+  // page to scroll sideways on a narrow screen.
+  pre: ({ text }) => (
+    <pre className="row row--pre">
+      <code>{text}</code>
+    </pre>
+  ),
+
   cmd: ({ name, desc }) => (
     <div className="row row--cmd">
       <span className="cmd__name">{name}</span>

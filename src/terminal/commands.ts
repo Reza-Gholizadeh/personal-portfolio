@@ -1,6 +1,6 @@
+import { posts } from '../data/blog';
 import * as resume from '../data/resume';
-import type { Environment } from './environment';
-import type { Command, OutputLine } from './types';
+import type { Command, CommandContext, OutputLine } from './types';
 
 /** Section header plus its underline — every command opens with one. */
 const heading = (text: string): OutputLine[] => [{ kind: 'heading', text }, { kind: 'rule' }];
@@ -81,7 +81,7 @@ const renderContact = (): OutputLine[] => [
  * browser could be made to disclose. Rows that only Chromium exposes are
  * omitted where unavailable instead of printed as "unknown".
  */
-const renderEnv = (env: Environment): OutputLine[] => [
+const renderEnv = ({ env }: CommandContext): OutputLine[] => [
   ...heading('env'),
   { kind: 'kv', key: 'viewport', value: env.viewport },
   { kind: 'kv', key: 'display', value: env.display },
@@ -98,6 +98,60 @@ const renderEnv = (env: Environment): OutputLine[] => [
   },
 ];
 
+/**
+ * Prose needs a blank line between paragraphs, but the résumé sections do not —
+ * a global CSS rule would also loosen the boot banner. Inserting the gap here
+ * keeps post data free of layout noise and the rest of the terminal tight.
+ */
+const spaceParagraphs = (lines: OutputLine[]): OutputLine[] =>
+  lines.flatMap((line, i): OutputLine[] =>
+    lines[i - 1]?.kind === 'text' && line.kind === 'text' ? [{ kind: 'blank' }, line] : [line],
+  );
+
+/** Finds a post by 1-based index or by slug, so `/blog 1` and `/blog affected-aware-ci` both work. */
+const findPost = (token: string) => {
+  const byIndex = posts[Number(token) - 1];
+  return byIndex ?? posts.find((post) => post.slug === token.toLowerCase());
+};
+
+const postIndex = (): OutputLine[] =>
+  posts.flatMap((post, i): OutputLine[] => [
+    { kind: 'meta', left: `${i + 1}. ${post.title}`, right: post.date },
+    { kind: 'text', text: post.standfirst, tone: 'dim' },
+    { kind: 'blank' },
+  ]);
+
+/**
+ * Lists posts, or opens one. A full post is long enough that dumping every
+ * post into the scrollback at once would bury the prompt.
+ */
+const renderBlog = ({ args }: CommandContext): OutputLine[] => {
+  const [token] = args;
+
+  if (!token) {
+    return [
+      ...heading('blog'),
+      ...postIndex(),
+      { kind: 'text', text: 'Open one with /blog 1, or by name: /blog ' + posts[0].slug, tone: 'dim' },
+    ];
+  }
+
+  const post = findPost(token);
+  if (!post) {
+    return [
+      { kind: 'text', text: `no such post: ${token}`, tone: 'accent' },
+      { kind: 'text', text: 'run /blog to list what is here.', tone: 'dim' },
+    ];
+  }
+
+  return [
+    ...heading(post.title),
+    { kind: 'text', text: post.date, tone: 'dim' },
+    { kind: 'blank' },
+    ...spaceParagraphs(post.body),
+  ];
+};
+
 // Reads `registry` below at call time, never at module load — the listing stays
 // the single source of truth, including /help's own description.
 const renderHelp = (): OutputLine[] => [
@@ -111,6 +165,7 @@ export const registry: readonly Command[] = [
   { name: '/about', desc: 'bio, role, stack, location', quick: true, run: renderAbout },
   { name: '/experience', desc: 'roles and what I shipped', quick: true, run: renderExperience },
   { name: '/projects', desc: 'selected side work', quick: true, run: renderProjects },
+  { name: '/blog', desc: 'writing — /blog to list, /blog 1 to read', quick: true, run: renderBlog },
   { name: '/skills', desc: 'stack by category', quick: true, run: renderSkills },
   { name: '/education', desc: 'degrees', run: renderEducation },
   { name: '/env', desc: 'what this page detected about your browser', run: renderEnv },
@@ -127,10 +182,14 @@ export const registry: readonly Command[] = [
 
 export const quickCommands = registry.filter((command) => command.quick);
 
-const normalize = (raw: string) => raw.trim().toLowerCase();
+/** Splits `/blog 1` into its command name and the words that follow it. */
+export function parseInput(raw: string): { name: string; args: string[] } {
+  const [name = '', ...args] = raw.trim().split(/\s+/);
+  return { name: name.toLowerCase(), args };
+}
 
 export function findCommand(raw: string): Command | undefined {
-  const name = normalize(raw);
+  const { name } = parseInput(raw);
   return registry.find((command) => command.name === name);
 }
 
