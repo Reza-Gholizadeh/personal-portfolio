@@ -20,6 +20,8 @@ const renderAbout = (): OutputLine[] => [
   { kind: 'kv', key: 'stack', value: resume.profile.stack },
   { kind: 'kv', key: 'location', value: resume.profile.location },
   { kind: 'kv', key: 'status', value: resume.profile.available },
+  { kind: 'blank' },
+  { kind: 'text', text: resume.profile.interests, tone: 'dim' },
 ];
 
 const renderExperience = (): OutputLine[] => [

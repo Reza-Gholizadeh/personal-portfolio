@@ -2,10 +2,13 @@ export const profile = {
   name: 'Reza Gholizadeh',
   handle: 'reza',
   host: 'portfolio',
-  role: 'Senior Front-End Engineer',
-  stack: 'TypeScript · React · Next.js',
+  role: 'Senior Software Engineer (Frontend & AI)',
+  stack: 'Frontend Architecture · TypeScript · React · AI Agents · RAG',
   location: 'Tehran, Iran',
-  available: 'Open to senior / staff front-end roles',
+  available:
+    'Currently at SnappFood · Open to exceptional senior, staff and AI-driven engineering opportunities',
+  interests:
+    'Outside of work, I enjoy playing chess, following football, exploring emerging AI technologies and spending time with family and friends.',
   summary:
     'Front-end engineer with 5+ years of experience building and scaling production web applications with TypeScript, React and Next.js for consumer products serving 5M+ active users and 500K+ daily orders. Passionate about building scalable frontend systems and exploring how AI can transform the way software is built and products are delivered. Experienced in AI agents, RAG systems and AI-powered developer tools, with a focus on translating AI capabilities into practical engineering improvements and measurable business impact.',
 } as const;
