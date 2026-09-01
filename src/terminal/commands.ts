@@ -109,8 +109,8 @@ const renderBlog = ({ args }: CommandContext): OutputLine[] => {
 
   if (slug && !findPost(slug)) {
     return [
-      { kind: 'text', text: `no such post: ${slug}`, tone: 'accent' },
-      { kind: 'text', text: 'run /blog to list what is here.', tone: 'dim' },
+      { kind: 'text', text: `bash: ${slug}: no such post`, tone: 'accent' },
+      { kind: 'text', text: 'Type /blog to list available posts.', tone: 'dim' },
     ];
   }
 
@@ -157,6 +157,7 @@ export const registry: readonly Command[] = [
     quick: true,
     run: renderBlog,
     opens: ({ args }) => (args[0] && findPost(args[0]) ? findPost(args[0])!.slug : null),
+    completions: () => posts.map((post) => post.slug),
   },
   { name: '/skills', desc: 'stack by category', quick: true, run: renderSkills },
   { name: '/education', desc: 'degrees', run: renderEducation },
@@ -195,17 +196,38 @@ export function findCommand(raw: string): Command | undefined {
  * outright — a trailing space reads as "this token is finished" anyway.
  * Case still completes, since lowercasing preserves length.
  */
+/**
+ * The ghost completion. Handles both halves of an input: the command name
+ * before the first space, and the first argument after it — so `/blog mo`
+ * completes to a post slug without the reader typing the whole thing.
+ *
+ * Always returns `raw` plus the missing tail, never a re-cased string: the view
+ * slices this against the raw input, so any divergence would misalign the ghost.
+ */
 export function completionFor(raw: string): string | null {
-  if (raw !== raw.trim()) return null;
   const typed = raw.toLowerCase();
-  if (!typed.startsWith('/') || typed.length < 2) return null;
-  return registry.find((c) => c.name.startsWith(typed) && c.name !== typed)?.name ?? null;
+  if (!typed.startsWith('/')) return null;
+
+  const space = typed.indexOf(' ');
+
+  if (space === -1) {
+    if (typed.length < 2) return null;
+    const name = registry.find((c) => c.name.startsWith(typed) && c.name !== typed)?.name;
+    return name ? raw + name.slice(typed.length) : null;
+  }
+
+  const command = registry.find((c) => c.name === typed.slice(0, space));
+  const partial = typed.slice(space + 1);
+  if (partial.includes(' ')) return null;
+
+  const match = command?.completions?.().find((v) => v.startsWith(partial) && v !== partial);
+  return match ? raw + match.slice(partial.length) : null;
 }
 
 export function unknownCommand(raw: string): OutputLine[] {
   return [
-    { kind: 'text', text: `command not found: ${raw}`, tone: 'accent' },
-    { kind: 'text', text: 'type /help to see everything this terminal knows.', tone: 'dim' },
+    { kind: 'text', text: `bash: ${raw}: command not found`, tone: 'accent' },
+    { kind: 'text', text: 'Type /help to see available commands.', tone: 'dim' },
   ];
 }
 

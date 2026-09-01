@@ -62,6 +62,10 @@ pure `(state, action) => state` function with no React or DOM imports. The
 components decide only how that state looks, and hold exactly one piece of
 state of their own: whether the input is focused, which is presentation.
 
+Tab completion covers arguments as well as command names: a command declares
+its accepted values with `completions`, so `/blog mo` completes a post slug
+without hardcoding the blog anywhere in the input handling.
+
 Opening a post leaves the terminal for a full-screen reading view
 ([`Article.tsx`](src/components/Article.tsx)) with its own proportional
 typography. A command declares that with `opens`, the same way `/clear`

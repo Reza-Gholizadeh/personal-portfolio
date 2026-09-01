@@ -43,7 +43,7 @@ Run validation`;
 
 export const posts: Post[] = [
   {
-    slug: 'affected-aware-ci',
+    slug: 'monorepo-ci-pipeline',
     title: 'How We Cut Our Monorepo CI Pipeline from 12 Minutes to 2 Minutes',
     date: '2026-09-01',
     tags: ['CI', 'Turborepo', 'Monorepo'],

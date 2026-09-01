@@ -68,6 +68,8 @@ export type Command = {
    * rather than a name the reducer has to recognise.
    */
   opens?: (context: CommandContext) => string | null;
+  /** Values accepted as the first argument, offered by Tab completion. */
+  completions?: () => readonly string[];
   run: (context: CommandContext) => OutputLine[];
 };
 

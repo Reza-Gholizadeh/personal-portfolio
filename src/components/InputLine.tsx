@@ -100,6 +100,16 @@ export default function InputLine({
     }
   };
 
+  // With the caret at the end of the input there is no character under it, so it
+  // would otherwise render a blank cell and push the suggestion one column
+  // right — making the ghost read as a separate word. Sitting the caret on the
+  // first suggested character instead keeps the completion looking continuous,
+  // the way shell autosuggestion does.
+  const atCaret = value.slice(caret, caret + 1);
+  const caretOnGhost = !atCaret && ghost.length > 0;
+  const caretChar = caretOnGhost ? ghost[0] : atCaret || ' ';
+  const ghostTail = caretOnGhost ? ghost.slice(1) : ghost;
+
   return (
     <div className={`row row--input ${isFocused ? 'is-focused' : ''}`}>
       <Prompt htmlFor={INPUT_ID} />
@@ -110,10 +120,10 @@ export default function InputLine({
           {/* Remounting on every edit restarts the CSS blink, so the caret is
               always solid at the moment you type. */}
           <span key={`${value}:${caret}`} className={`caret ${isFocused ? 'is-blinking' : ''}`}>
-            {value.slice(caret, caret + 1) || ' '}
+            {caretChar}
           </span>
           {value.slice(caret + 1)}
-          {ghost && <span className="inputline__ghost">{ghost}</span>}
+          {ghostTail && <span className="inputline__ghost">{ghostTail}</span>}
         </span>
 
         <input
