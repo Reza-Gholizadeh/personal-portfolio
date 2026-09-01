@@ -5,8 +5,7 @@ export const profile = {
   role: 'Senior Software Engineer (Frontend & AI)',
   stack: 'Frontend Architecture · TypeScript · React · AI Agents · RAG',
   location: 'Tehran, Iran',
-  available:
-    'Currently at SnappFood · Open to exceptional senior, staff and AI-driven engineering opportunities',
+  available: 'Currently at SnappFood · Open to exceptional senior and AI-driven engineering opportunities',
   interests:
     'Outside of work, I enjoy playing chess, following football, exploring emerging AI technologies and spending time with family and friends.',
   summary:
