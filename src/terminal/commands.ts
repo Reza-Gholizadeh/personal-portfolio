@@ -28,6 +28,8 @@ const renderExperience = (): OutputLine[] => [
     { kind: 'meta', left: `${job.role} @ ${job.company}`, right: job.period },
     { kind: 'text', text: job.location, tone: 'dim' },
     { kind: 'blank' },
+    { kind: 'text', text: job.summary },
+    { kind: 'blank' },
     ...job.blocks.map((block): OutputLine => ({ kind: 'tagged', tag: block.tag, body: block.body })),
   ]),
 ];

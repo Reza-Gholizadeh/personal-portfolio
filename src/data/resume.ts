@@ -27,6 +27,8 @@ export type Experience = {
   company: string;
   period: string;
   location: string;
+  /** Untagged lead paragraph, before the tagged blocks. */
+  summary: string;
   blocks: ExperienceBlock[];
 };
 
@@ -36,30 +38,36 @@ export const experience: Experience[] = [
     company: 'SnappFood',
     period: '2021 — Present',
     location: 'Tehran, Iran · Hybrid',
+    summary:
+      "Build and scale production web applications for Iran's leading food-delivery platform, serving 5M+ active users and 500K+ daily orders across desktop and mobile browsers.",
     blocks: [
       {
-        tag: 'Platform',
-        body: "Build and maintain production web applications for Iran's leading food-delivery platform, serving 5M+ active users and 500K+ daily orders across desktop and mobile browsers.",
-      },
-      {
-        tag: 'Design System',
-        body: "Contributed to the full rewrite of SnappFood on Bonyan, the company's proprietary design system and frontend platform, built with Turborepo, Next.js, TypeScript, React Query and Styled Components.",
+        tag: 'Frontend Platform',
+        body: "Contributed to the full rewrite of SnappFood on Bonyan, the company's proprietary frontend platform and design system, using Turborepo, Next.js, TypeScript, React Query and Styled Components.",
       },
       {
         tag: 'Architecture',
-        body: 'Decomposed the Menu domain out of the Core application into an independently releasable micro-frontend using Webpack Module Federation, reducing cross-domain coupling and increasing team ownership.',
+        body: 'Decomposed the Menu domain from the Core application into an independently releasable application using build-time composition, reducing cross-domain coupling, limiting change blast radius and enabling more autonomous ownership and release cycles.',
+      },
+      {
+        tag: 'Observability',
+        body: 'Established frontend observability practices using Sentry and Grafana Faro, covering error tracking, performance monitoring and user-session visibility to improve production issue detection, diagnosis and resolution.',
       },
       {
         tag: 'Reliability',
-        body: 'Improved frontend reliability through unit and end-to-end testing and automated quality checks, focused on critical user flows, edge cases and regression prevention.',
+        body: 'Strengthened frontend reliability through unit and end-to-end testing, automated quality gates and regression prevention across critical user flows and edge cases.',
+      },
+      {
+        tag: 'AI Engineering',
+        body: 'Built an AI-powered developer assistant using Claude Agent SDK, RAG, hybrid search and Qdrant, turning internal engineering knowledge and development workflows into an agentic interface and reducing friction in accessing technical knowledge and project context.',
       },
       {
         tag: 'Internal Tools',
-        body: 'Built the Bordar Panel to streamline order-assignment workflows for 2,000+ vendors.',
+        body: 'Built Bordar Panel to streamline order-assignment workflows for 2,000+ vendors, improving operational efficiency for vendor-facing teams.',
       },
       {
         tag: 'Internal Tools',
-        body: 'Built a biker support ticketing platform that replaced 1,500+ daily inbound support calls with structured digital workflows.',
+        body: 'Built a biker support ticketing platform that replaced 1,500+ daily inbound support calls with structured digital workflows, improving support scalability and reducing reliance on manual operations.',
       },
     ],
   },
