@@ -109,7 +109,7 @@ const renderBlog = ({ args }: CommandContext): OutputLine[] => {
 
   if (slug && !findPost(slug)) {
     return [
-      { kind: 'text', text: `bash: ${slug}: no such post`, tone: 'accent' },
+      { kind: 'text', text: `bash: ${slug}: no such post`, tone: 'error' },
       { kind: 'text', text: 'Type /blog to list available posts.', tone: 'dim' },
     ];
   }
@@ -226,7 +226,7 @@ export function completionFor(raw: string): string | null {
 
 export function unknownCommand(raw: string): OutputLine[] {
   return [
-    { kind: 'text', text: `bash: ${raw}: command not found`, tone: 'accent' },
+    { kind: 'text', text: `bash: ${raw}: command not found`, tone: 'error' },
     { kind: 'text', text: 'Type /help to see available commands.', tone: 'dim' },
   ];
 }

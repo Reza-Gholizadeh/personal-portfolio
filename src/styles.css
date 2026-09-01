@@ -8,6 +8,7 @@
   --accent: #fbbf24;
   --accent-soft: rgba(251, 191, 36, 0.12);
   --accent-dim: #a9791a;
+  --error: #f87171;
   --rule: rgba(255, 255, 255, 0.07);
   --rule-strong: rgba(255, 255, 255, 0.12);
 
@@ -251,6 +252,12 @@ body::before {
   color: var(--accent);
   letter-spacing: 0.06em;
   font-size: 0.8125rem;
+}
+
+/* Errors keep body sizing — tone-accent shrinks text, which would make a
+   failure read as a caption rather than a response to what was typed. */
+.tone-error {
+  color: var(--error);
 }
 
 .row--heading {

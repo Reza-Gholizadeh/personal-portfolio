@@ -1,4 +1,4 @@
-export type Tone = 'default' | 'dim' | 'accent';
+export type Tone = 'default' | 'dim' | 'accent' | 'error';
 
 /**
  * A single renderable row of terminal output.
