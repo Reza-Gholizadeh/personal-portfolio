@@ -16,7 +16,7 @@ export const initialSession: SessionState = {
   history: [],
   historyCursor: null,
   bootRun: 0,
-  openPost: null,
+  navigateTo: null,
   injections: 0,
   nextEntryId: 0,
 };
@@ -61,11 +61,12 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
         return { ...remembered, entries: [], bootRun: remembered.bootRun + 1 };
       }
 
-      // A command may hand the reader off to the full-screen post view. The
-      // echoed line is still committed, so returning leaves a coherent history.
-      const slug = match?.opens?.(context) ?? null;
-      if (slug) {
-        return append({ ...remembered, openPost: slug }, { input: command, lines: [] });
+      // A command may hand the reader off to a real page (e.g. an
+      // Astro-rendered blog post). The echoed line is still committed, so
+      // returning leaves a coherent history.
+      const href = match?.opens?.(context) ?? null;
+      if (href) {
+        return append({ ...remembered, navigateTo: href }, { input: command, lines: [] });
       }
 
       return append(remembered, {
@@ -80,9 +81,6 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
         state.historyCursor === null ? state.history.length - 1 : Math.max(0, state.historyCursor - 1);
       return { ...withInput(state, state.history[cursor]), historyCursor: cursor };
     }
-
-    case 'postClosed':
-      return { ...state, openPost: null };
 
     case 'historyNext': {
       if (state.historyCursor === null) return state;

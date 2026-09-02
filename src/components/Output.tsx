@@ -4,11 +4,8 @@ import type { OutputLine, Tone } from '../terminal/types';
 /** Narrows the union to the one member with the given `kind`. */
 type LineOf<K extends OutputLine['kind']> = Extract<OutputLine, { kind: K }>;
 
-/** Threaded through every renderer so a `postEntry` can run its `/blog <slug>` command on click. */
-type RenderCtx = { onCommand: (command: string) => void };
-
 /** One renderer per line kind. */
-type Renderers = { [K in OutputLine['kind']]: (line: LineOf<K>, ctx: RenderCtx) => React.ReactElement };
+type Renderers = { [K in OutputLine['kind']]: (line: LineOf<K>) => React.ReactElement };
 
 const Link = ({ href, label }: { href: string; label: string }) => {
   const isExternal = href.startsWith('http');
@@ -89,17 +86,17 @@ const renderers: Renderers = {
     </pre>
   ),
 
-  panel: ({ label, lines }, ctx) => (
+  panel: ({ label, lines }) => (
     <section className="row row--panel" aria-label={label}>
       <h2 className="panel__label">{label}</h2>
       {lines.map((line, index) => (
-        <React.Fragment key={index}>{render(line, ctx)}</React.Fragment>
+        <React.Fragment key={index}>{render(line)}</React.Fragment>
       ))}
     </section>
   ),
 
-  postEntry: ({ ordinal, date, readingTime, command, title, tags }, { onCommand }) => (
-    <button type="button" className="row row--post" onClick={() => onCommand(command)}>
+  postEntry: ({ ordinal, date, readingTime, command, href, title, tags }) => (
+    <a className="row row--post" href={href}>
       <div className="post__meta">
         <span className="post__ordinal">{ordinal}</span>
         <span className="post__date">{date}</span>
@@ -108,7 +105,7 @@ const renderers: Renderers = {
       <div className="post__command">{command}</div>
       <h3 className="post__title">{title}</h3>
       <div className="post__tags">{tags.join(' · ')}</div>
-    </button>
+    </a>
   ),
 
   cmd: ({ name, desc }) => (
@@ -122,24 +119,19 @@ const renderers: Renderers = {
   ),
 };
 
-const render = (line: OutputLine, ctx: RenderCtx) =>
-  (renderers[line.kind] as (l: OutputLine, ctx: RenderCtx) => React.ReactElement)(line, ctx);
+const render = (line: OutputLine) => (renderers[line.kind] as (l: OutputLine) => React.ReactElement)(line);
 
 type OutputProps = {
   lines: readonly OutputLine[];
-  /** Runs a command, e.g. when a `postEntry` row is clicked. Body prose never
-      emits a `postEntry` line, so callers rendering only prose can omit this. */
-  onCommand?: (command: string) => void;
 };
 
-export default function Output({ lines, onCommand = () => {} }: OutputProps) {
-  const ctx: RenderCtx = { onCommand };
+export default function Output({ lines }: OutputProps) {
   return (
     <>
       {/* Index keys are safe here: a rendered block is immutable — lines are
           never inserted, reordered or removed once committed. */}
       {lines.map((line, index) => (
-        <React.Fragment key={index}>{render(line, ctx)}</React.Fragment>
+        <React.Fragment key={index}>{render(line)}</React.Fragment>
       ))}
     </>
   );

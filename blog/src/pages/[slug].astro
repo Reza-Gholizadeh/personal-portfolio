@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../layouts/PostLayout.astro';
+import { readingTime } from '../lib/readingTime';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const dateStr = post.data.date.toISOString().slice(0, 10);
+const minutes = readingTime(post.body ?? '');
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  dateModified: post.data.date.toISOString(),
+  author: {
+    '@type': 'Person',
+    name: 'Reza Gholizadeh',
+    url: 'https://reza-gholizadeh.github.io/personal-portfolio/',
+  },
+  publisher: { '@type': 'Person', name: 'Reza Gholizadeh' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalURL.toString() },
+  keywords: post.data.tags.join(', '),
+  url: canonicalURL.toString(),
+};
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  path={`/blog/${post.id}`}
+  topRight={minutes}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <div class="article__tags">
+    {post.data.tags.map((tag) => <span class="article__tag">{tag}</span>)}
+  </div>
+  <h1 class="article__title">{post.data.title}</h1>
+  <div class="article__meta">
+    <span>{dateStr}</span>
+    <span class="article__sep" aria-hidden="true">◆</span>
+    <span>{minutes}</span>
+    <span class="article__sep" aria-hidden="true">◆</span>
+    <span>Reza Gholizadeh</span>
+  </div>
+  <hr class="article__rule" />
+  <div class="article__prose">
+    <Content />
+  </div>
+</PostLayout>

@@ -10,7 +10,13 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "blog:install": "npm install --prefix blog",
+    "blog:dev": "npm run dev --prefix blog",
+    "blog:build": "npm run build --prefix blog",
+    "merge:blog": "mkdir -p dist/blog && cp -r blog/dist/. dist/blog/",
+    "build:all": "npm run build && npm run blog:build && npm run merge:blog",
+    "preview:all": "npm run build:all && npm run preview"
   },
   "dependencies": {
     "react": "^19.1.1",

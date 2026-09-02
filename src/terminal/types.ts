@@ -27,6 +27,7 @@ export type OutputLine =
       date: string;
       readingTime: string;
       command: string;
+      href: string;
       title: string;
       tags: readonly string[];
     };
@@ -63,9 +64,10 @@ export type Command = {
    */
   resets?: boolean;
   /**
-   * Returns a post slug to leave the terminal for the reading view, or null to
-   * stay. Declared like `resets` so navigation is a property of the command
-   * rather than a name the reducer has to recognise.
+   * Returns a URL to leave the SPA for (real browser navigation, e.g. to an
+   * Astro-rendered blog post), or null to stay. Declared like `resets` so
+   * navigation is a property of the command rather than a name the reducer
+   * has to recognise.
    */
   opens?: (context: CommandContext) => string | null;
   /** Values accepted as the first argument, offered by Tab completion. */
@@ -86,8 +88,9 @@ export type SessionState = {
   historyCursor: number | null;
   /** Bumped by /clear to replay the boot banner. */
   bootRun: number;
-  /** Slug of the post being read full-screen; null while in the terminal. */
-  openPost: string | null;
+  /** URL to leave the SPA for, set by a command's `opens`; null while in the
+      terminal. */
+  navigateTo: string | null;
   /**
    * Bumped whenever the reducer replaces the input text itself (Tab completion,
    * history recall). The view watches this to move the real DOM caret, which it
@@ -103,5 +106,4 @@ export type SessionAction =
   | { type: 'completionAccepted'; completion: string }
   | { type: 'submitted'; env: Environment }
   | { type: 'historyPrevious' }
-  | { type: 'historyNext' }
-  | { type: 'postClosed' };
+  | { type: 'historyNext' };

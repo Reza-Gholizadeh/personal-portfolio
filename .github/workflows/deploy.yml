@@ -23,13 +23,24 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            blog/package-lock.json
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm run build
+      - run: npm ci --prefix blog
+      - run: npm run typecheck --prefix blog
+      - run: npm run build --prefix blog
+      # Merges the Astro project's own build into dist/blog/, matching its
+      # `base: '/personal-portfolio/blog'` config — see blog/astro.config.mjs.
+      - run: npm run merge:blog
       # SPA fallback: Pages serves 404.html for unknown paths, so a copy of
-      # index.html keeps deep links working.
+      # index.html keeps deep links working. Runs after the merge above so
+      # everything under /blog/* is a real file by the time this fallback
+      # would ever be reached.
       - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v4
         with:

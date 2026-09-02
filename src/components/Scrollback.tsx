@@ -8,16 +8,15 @@ type ScrollbackProps = {
   entries: readonly Entry[];
   bootRun: number;
   lastEntryRef: Ref<HTMLElement>;
-  onCommand: (command: string) => void;
 };
 
 /** The committed history: the boot banner followed by every executed command. */
-export default function Scrollback({ entries, bootRun, lastEntryRef, onCommand }: ScrollbackProps) {
+export default function Scrollback({ entries, bootRun, lastEntryRef }: ScrollbackProps) {
   return (
     <>
       {/* Keyed on bootRun so /clear replays the staggered reveal. */}
       <section className="boot" aria-label="Introduction" key={bootRun}>
-        <Output lines={bootLines} onCommand={onCommand} />
+        <Output lines={bootLines} />
       </section>
 
       {entries.map((entry, index) => (
@@ -28,7 +27,7 @@ export default function Scrollback({ entries, bootRun, lastEntryRef, onCommand }
               <span className="echo__text">{entry.input}</span>
             </div>
           )}
-          <Output lines={entry.lines} onCommand={onCommand} />
+          <Output lines={entry.lines} />
         </section>
       ))}
     </>

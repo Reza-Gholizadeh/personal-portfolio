@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
-import Article from './Article';
 import InputLine, { type InputLineHandle } from './InputLine';
 import Launcher from './Launcher';
 import Scrollback from './Scrollback';
 import TitleBar from './TitleBar';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
-import { posts } from '../data/blog';
 import { useScrollToLatest } from '../hooks/useScrollToLatest';
 import { useTerminalSession } from '../hooks/useTerminalSession';
 
@@ -26,12 +24,16 @@ export default function Terminal() {
   useScrollToLatest(screenRef, lastEntryRef, session.entries, !reducedMotion);
 
   const focusInput = useCallback(() => inputHandleRef.current?.focus(), []);
-  // Keyed on openPost, not mount: this component stays mounted while an article
-  // is open and only swaps its subtree, so InputLine remounts underneath it and
-  // would otherwise come back unfocused.
   useEffect(() => {
-    if (!session.openPost) focusInput();
-  }, [session.openPost, focusInput]);
+    focusInput();
+  }, [focusInput]);
+
+  // A command can hand the reader off to a real page (e.g. an Astro-rendered
+  // blog post). This is the one place allowed to touch `window` for it — the
+  // reducer only ever produces the URL.
+  useEffect(() => {
+    if (session.navigateTo) window.location.assign(session.navigateTo);
+  }, [session.navigateTo]);
 
   const runCommand = useCallback(
     (command: string) => {
@@ -48,25 +50,13 @@ export default function Terminal() {
     focusInput();
   };
 
-  // Reading a post replaces the terminal entirely rather than rendering beside
-  // it, so the article gets the whole viewport and its own typography.
-  const openPost = posts.find((post) => post.slug === session.openPost);
-  if (openPost) {
-    return <Article post={openPost} onClose={() => session.dispatch({ type: 'postClosed' })} />;
-  }
-
   return (
     <div className="terminal" onMouseUp={handleMouseUp}>
       <TitleBar />
 
       <div className="screen" ref={screenRef}>
         <div className="screen__inner">
-          <Scrollback
-            entries={session.entries}
-            bootRun={session.bootRun}
-            lastEntryRef={lastEntryRef}
-            onCommand={runCommand}
-          />
+          <Scrollback entries={session.entries} bootRun={session.bootRun} lastEntryRef={lastEntryRef} />
 
           <InputLine
             value={session.input}

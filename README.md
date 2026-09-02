@@ -1,6 +1,9 @@
 # Reza Gholizadeh — Portfolio
 
 Interactive terminal résumé. React + TypeScript + Vite, no UI dependencies.
+`/blog` hands off to a separate Astro project ([`blog/`](blog)) that renders
+each post as a real, crawlable static page — see
+[Blog](#blog) below.
 
 ## Run
 
@@ -12,16 +15,19 @@ npm run dev
 `npm run build` emits a static bundle to `dist/`, deployable as-is to Vercel,
 Netlify, GitHub Pages or any static host. Deployment to GitHub Pages runs from
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) on every push to
-`main`.
+`main`, and also builds and merges the Astro blog in (see [Blog](#blog)).
 
-| Script                 | Purpose                           |
-| ---------------------- | --------------------------------- |
-| `npm run dev`          | Vite dev server                   |
-| `npm run build`        | typecheck, then production bundle |
-| `npm run typecheck`    | `tsc -b --noEmit`                 |
-| `npm run lint`         | ESLint (flat config)              |
-| `npm run format`       | Prettier write                    |
-| `npm run format:check` | Prettier check, for CI            |
+| Script                 | Purpose                                        |
+| ---------------------- | ---------------------------------------------- |
+| `npm run dev`          | Vite dev server                                |
+| `npm run build`        | typecheck, then production bundle              |
+| `npm run typecheck`    | `tsc -b --noEmit`                              |
+| `npm run lint`         | ESLint (flat config)                           |
+| `npm run format`       | Prettier write                                 |
+| `npm run format:check` | Prettier check, for CI                         |
+| `npm run build:all`    | this app + the Astro blog, merged into `dist/` |
+| `npm run preview:all`  | `build:all`, then serve it locally             |
+| `npm run blog:dev`     | Astro dev server for the blog, on its own      |
 
 ## Commands
 
@@ -66,15 +72,15 @@ Tab completion covers arguments as well as command names: a command declares
 its accepted values with `completions`, so `/blog mo` completes a post slug
 without hardcoding the blog anywhere in the input handling.
 
-Opening a post leaves the terminal for a full-screen reading view
-([`Article.tsx`](src/components/Article.tsx)) with its own proportional
-typography. A command declares that with `opens`, the same way `/clear`
-declares `resets`, so the reducer never recognises a command by name.
-
-Posts live in [`src/data/blog.ts`](src/data/blog.ts) as typed `OutputLine[]`
-rather than markdown strings — the same shape as every other section, and no
-parser in the bundle. If posting gets frequent, convert markdown to these lines
-at build time rather than shipping a renderer.
+A command can hand the reader off to a real page instead of staying in the
+terminal — declared with `opens`, the same way `/clear` declares `resets`, so
+the reducer never recognises a command by name. `/blog <slug>` is the one
+command that does this: `opens` resolves to the post's URL on the Astro blog
+project, and a `useEffect` in `Terminal.tsx` — the one place allowed to touch
+`window` — performs the actual navigation. `src/data/blog.ts` holds only the
+metadata the terminal's `/blog` listing needs (title, date, tags, reading
+time); the prose lives in `blog/src/content/posts/*.md` and is hand-kept in
+sync (see [Blog](#blog)).
 
 Reading the browser for `/env` is a side effect, so it happens once at the
 edge — `readEnvironment()` is called when a command is submitted and the
@@ -94,3 +100,32 @@ All résumé content is in [`src/data/resume.ts`](src/data/resume.ts) — profil
 contact, experience, projects, skills and education. Commands are wired
 up in [`src/terminal/commands.ts`](src/terminal/commands.ts); adding one means
 appending to the `registry` array.
+
+## Blog
+
+`/blog` used to be an in-memory view inside this SPA — no real URL, no
+per-page `<title>`, nothing for a crawler to index. [`blog/`](blog) is a
+separate Astro project (Content Collections + `@astrojs/sitemap`) that fixes
+that: every post is a real, independently-served static page at
+`/blog/<slug>/`, with its own title, meta description, canonical link,
+OG/Twitter tags, JSON-LD `BlogPosting`, and an entry in the sitemap. It is a
+fully independent app — its own `package.json`, deliberately not an npm
+workspace — so the root project's ESLint/Prettier/`tsc` never see it (`blog`
+is in `eslint.config.js`'s `ignores` and in `.prettierignore`).
+
+CI builds both projects and copies the Astro output into `dist/blog/` before
+uploading, so one GitHub Pages deploy serves both
+(see [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). Locally,
+`npm run build:all` (root) does the same merge; `npm run blog:dev` runs
+Astro's own dev server.
+
+Adding a post means two small, hand-kept-in-sync edits:
+
+1. Add `blog/src/content/posts/<slug>.md` (frontmatter: `title`, `date`,
+   `tags`, `description`) — this is what Astro renders.
+2. Append the matching metadata to [`src/data/blog.ts`](src/data/blog.ts)
+   (`slug`, `title`, `date`, `tags`, `readingTime`) — this is what the
+   terminal's `/blog` listing renders and links from.
+
+At roughly one post a year, that's simpler than a script that regenerates one
+file from the other.

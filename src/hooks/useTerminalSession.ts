@@ -35,7 +35,7 @@ export function useTerminalSession() {
       input: state.input,
       caret: state.caret,
       bootRun: state.bootRun,
-      openPost: state.openPost,
+      navigateTo: state.navigateTo,
       injections: state.injections,
       completion,
       /**
@@ -53,7 +53,7 @@ export function useTerminalSession() {
       state.input,
       state.caret,
       state.bootRun,
-      state.openPost,
+      state.navigateTo,
       state.injections,
       completion,
       submit,

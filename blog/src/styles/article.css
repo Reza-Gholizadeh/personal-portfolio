@@ -1,0 +1,270 @@
+:root {
+  --bg-screen: #0b0b0e;
+  --fg: #e6e6ea;
+  --dim: #75757f;
+  --dimmer: #4a4a52;
+  --accent: #fbbf24;
+  --accent-dim: #a9791a;
+  --link: #60a5fa;
+  --link-soft: #93c5fd;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-screen);
+  color: var(--fg);
+  font-family: var(--mono);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(251, 191, 36, 0.28);
+}
+
+/* ---------- ported from src/styles.css .article__* block ---------- */
+
+.article__bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-screen);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #1c1c22;
+  font-size: 0.8125rem;
+  color: var(--dimmer);
+}
+
+.article__back {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--dim);
+  font: inherit;
+  text-decoration: none;
+}
+
+.article__back:hover,
+.article__back:focus-visible {
+  color: var(--accent);
+}
+
+.article__path {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.article__body {
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+}
+
+.article__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.article__tag {
+  padding: 3px 9px;
+  border: 1px solid var(--accent-dim);
+  border-radius: 3px;
+  color: var(--accent);
+  font-size: 0.75rem;
+}
+
+.article__title {
+  margin: 0 0 22px;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: #f2f2f4;
+}
+
+.article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--dimmer);
+  font-size: 0.8125rem;
+}
+
+.article__sep {
+  color: var(--accent-dim);
+}
+
+.article__rule {
+  margin: 34px 0;
+  border: 0;
+  border-top: 1px solid #1c1c22;
+}
+
+.article__prose {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: #c8c8d0;
+}
+
+.article__prose p {
+  margin: 0 0 1.25em;
+}
+
+.article__prose p:last-child {
+  margin-bottom: 0;
+}
+
+.article__prose h2 {
+  margin: 40px 0 6px;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f2f2f4;
+}
+
+.article__prose blockquote {
+  margin: 14px 0 1.25em;
+  padding-left: 14px;
+  border-left: 2px solid var(--accent);
+  color: #d6d6de;
+  font-size: 1.0625rem;
+  font-style: italic;
+}
+
+.article__prose pre {
+  margin: 14px 0 1.25em;
+  padding: 12px 14px;
+  overflow-x: auto;
+  border: 1px solid #23232a;
+  border-radius: 4px;
+  background: #0d0d11;
+  color: var(--dim);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-family: var(--mono);
+}
+
+.article__prose pre code {
+  font: inherit;
+  white-space: pre;
+}
+
+.article__prose a {
+  color: var(--link);
+}
+
+.article__prose a:hover {
+  color: var(--link-soft);
+}
+
+/* Bridge for the terminal's tone-dim / tone-accent, ported from
+   src/styles.css .tone-dim / .tone-accent — markdown loses that structured
+   field, so posts opt in per-span with raw inline HTML. */
+.article__prose .prose-dim {
+  color: var(--dim);
+}
+
+.article__prose .prose-note {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 560px) {
+  .article__body {
+    padding: 36px 18px 72px;
+  }
+}
+
+/* ---------- index listing, ported from src/styles.css .row--post / .post__* ---------- */
+
+.index__intro {
+  color: var(--dimmer);
+  font-size: 0.8125rem;
+}
+
+.index__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row--post {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  margin-top: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.row--post:hover .post__title,
+.row--post:focus-visible .post__title {
+  color: var(--link-soft);
+}
+
+.row--post:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.post__meta {
+  display: flex;
+  gap: 18px;
+  color: var(--dimmer);
+  font-size: 0.8125rem;
+}
+
+.post__ordinal {
+  color: var(--dim);
+}
+
+.post__title {
+  margin: 2px 0 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--fg);
+  transition: color 0.15s ease;
+}
+
+.post__tags {
+  color: var(--dimmer);
+  font-size: 0.8125rem;
+}

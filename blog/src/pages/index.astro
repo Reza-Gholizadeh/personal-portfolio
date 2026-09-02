@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import PostLayout from '../layouts/PostLayout.astro';
+import { readingTime } from '../lib/readingTime';
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<PostLayout
+  title="Blog"
+  description="Writing on frontend architecture, CI/CD, and shipping software at scale."
+  path="/blog"
+  ogType="website"
+>
+  <p class="index__intro">{posts.length} {posts.length === 1 ? 'post' : 'posts'}.</p>
+  <ul class="index__list">
+    {posts.map((post, i) => (
+      <li>
+        <a class="row--post" href={`${import.meta.env.BASE_URL}${post.id}/`}>
+          <div class="post__meta">
+            <span class="post__ordinal">{String(i + 1).padStart(2, '0')}</span>
+            <span class="post__date">{post.data.date.toISOString().slice(0, 10)}</span>
+            <span class="post__time">{readingTime(post.body ?? '')}</span>
+          </div>
+          <h2 class="post__title">{post.data.title}</h2>
+          <div class="post__tags">{post.data.tags.join(' · ')}</div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</PostLayout>

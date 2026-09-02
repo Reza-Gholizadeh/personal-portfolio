@@ -1,4 +1,4 @@
-import { posts, readingTime } from '../data/blog';
+import { posts } from '../data/blog';
 import * as resume from '../data/resume';
 import type { Command, CommandContext, OutputLine } from './types';
 
@@ -100,6 +100,9 @@ const renderEnv = ({ env }: CommandContext): OutputLine[] => [
 
 const findPost = (slug: string) => posts.find((post) => post.slug === slug.toLowerCase());
 
+/** The real, crawlable URL a post lives at — served by the sibling Astro project. */
+const postHref = (slug: string): string => `${import.meta.env.BASE_URL}blog/${slug}/`;
+
 /**
  * The index. Opening a post is handled by `opens` below, which hands the reader
  * to the full-screen reading view rather than printing the article inline.
@@ -128,8 +131,9 @@ const renderBlog = ({ args }: CommandContext): OutputLine[] => {
           kind: 'postEntry',
           ordinal: String(i + 1).padStart(2, '0'),
           date: post.date,
-          readingTime: readingTime(post),
+          readingTime: post.readingTime,
           command: `/blog ${post.slug}`,
+          href: postHref(post.slug),
           title: post.title,
           tags: post.tags,
         })),
@@ -156,7 +160,7 @@ export const registry: readonly Command[] = [
     desc: 'writing — /blog to list, /blog <slug> to read',
     quick: true,
     run: renderBlog,
-    opens: ({ args }) => (args[0] && findPost(args[0]) ? findPost(args[0])!.slug : null),
+    opens: ({ args }) => (args[0] && findPost(args[0]) ? postHref(findPost(args[0])!.slug) : null),
     completions: () => posts.map((post) => post.slug),
   },
   { name: '/skills', desc: 'stack by category', quick: true, run: renderSkills },
