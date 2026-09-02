@@ -9,6 +9,8 @@
   --accent-soft: rgba(251, 191, 36, 0.12);
   --accent-dim: #a9791a;
   --error: #f87171;
+  --link: #60a5fa;
+  --link-soft: #93c5fd;
   --rule: rgba(255, 255, 255, 0.07);
   --rule-strong: rgba(255, 255, 255, 0.12);
 
@@ -520,7 +522,31 @@ body::before {
 .row--post {
   display: grid;
   gap: 2px;
+  width: 100%;
   margin-top: 20px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+.row--post:hover .post__title,
+.row--post:focus-visible .post__title {
+  color: var(--link-soft);
+}
+
+.row--post:hover .post__command,
+.row--post:focus-visible .post__command {
+  color: var(--link);
+  text-decoration: underline;
+}
+
+.row--post:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
 }
 
 .post__meta {
@@ -536,6 +562,7 @@ body::before {
 
 .post__command {
   color: var(--accent);
+  transition: color 0.15s ease;
 }
 
 .post__title {
@@ -543,6 +570,7 @@ body::before {
   font-size: 0.9375rem;
   font-weight: 500;
   color: var(--fg);
+  transition: color 0.15s ease;
 }
 
 .post__tags {

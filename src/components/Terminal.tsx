@@ -61,7 +61,12 @@ export default function Terminal() {
 
       <div className="screen" ref={screenRef}>
         <div className="screen__inner">
-          <Scrollback entries={session.entries} bootRun={session.bootRun} lastEntryRef={lastEntryRef} />
+          <Scrollback
+            entries={session.entries}
+            bootRun={session.bootRun}
+            lastEntryRef={lastEntryRef}
+            onCommand={runCommand}
+          />
 
           <InputLine
             value={session.input}
