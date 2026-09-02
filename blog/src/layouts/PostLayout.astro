@@ -8,7 +8,7 @@ interface Props {
   path: string;
   topRight?: string;
   ogType?: 'website' | 'article';
-  jsonLd?: Record<string, unknown>;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 const { title, description, path, topRight, ogType, jsonLd } = Astro.props;
 

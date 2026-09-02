@@ -14,7 +14,7 @@ const dateStr = post.data.date.toISOString().slice(0, 10);
 const minutes = readingTime(post.body ?? '');
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const jsonLd = {
+const blogPostingJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
   headline: post.data.title,
@@ -31,6 +31,16 @@ const jsonLd = {
   keywords: post.data.tags.join(', '),
   url: canonicalURL.toString(),
 };
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://reza-gholizadeh.github.io/personal-portfolio/' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: new URL('..', canonicalURL).toString() },
+    { '@type': 'ListItem', position: 3, name: post.data.title, item: canonicalURL.toString() },
+  ],
+};
 ---
 
 <PostLayout
@@ -39,7 +49,7 @@ const jsonLd = {
   path={`/blog/${post.id}`}
   topRight={minutes}
   ogType="article"
-  jsonLd={jsonLd}
+  jsonLd={[blogPostingJsonLd, breadcrumbJsonLd]}
 >
   <div class="article__tags">
     {post.data.tags.map((tag) => <span class="article__tag">{tag}</span>)}

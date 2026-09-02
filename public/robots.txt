@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://reza-gholizadeh.github.io/personal-portfolio/sitemap.xml
 Sitemap: https://reza-gholizadeh.github.io/personal-portfolio/blog/sitemap-index.xml

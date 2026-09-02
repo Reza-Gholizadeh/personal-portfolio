@@ -3,10 +3,14 @@ interface Props {
   title: string;
   description: string;
   ogType?: 'website' | 'article';
-  jsonLd?: Record<string, unknown>;
+  /** One or more JSON-LD documents (e.g. BlogPosting + BreadcrumbList) — each
+      renders as its own <script> tag, which Google treats the same as a
+      single combined document. */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 const { title, description, ogType = 'website', jsonLd } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const jsonLdDocs = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <title>{title}</title>
@@ -19,4 +23,4 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
+{jsonLdDocs.map((doc) => <script type="application/ld+json" is:inline set:html={JSON.stringify(doc)} />)}

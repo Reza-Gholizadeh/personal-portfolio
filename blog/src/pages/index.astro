@@ -6,6 +6,22 @@ import { readingTime } from '../lib/readingTime';
 const posts = (await getCollection('posts')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Blog',
+  url: canonicalURL.toString(),
+  author: { '@type': 'Person', name: 'Reza Gholizadeh' },
+  blogPost: posts.map((post) => ({
+    '@type': 'BlogPosting',
+    headline: post.data.title,
+    datePublished: post.data.date.toISOString(),
+    url: new URL(`${post.id}/`, canonicalURL).toString(),
+  })),
+};
 ---
 
 <PostLayout
@@ -13,6 +29,7 @@ const posts = (await getCollection('posts')).sort(
   description="Writing on frontend architecture, CI/CD, and shipping software at scale."
   path="/blog"
   ogType="website"
+  jsonLd={jsonLd}
 >
   <p class="index__intro">{posts.length} {posts.length === 1 ? 'post' : 'posts'}.</p>
   <ul class="index__list">
